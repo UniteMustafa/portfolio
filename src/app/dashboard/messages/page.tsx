@@ -127,7 +127,32 @@ export default function MessagesDashboardPage() {
       prev.map((m) => m.id === selectedId ? { ...m, replies: [...m.replies, reply] } : m)
     );
     setReplyText("");
-    setToastMsg("Reply sent!");
+
+    // Send email reply to the original sender
+    const targetMsg = messages.find((m) => m.id === selectedId);
+    if (targetMsg) {
+      try {
+        const res = await fetch("/api/send-email", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            action: "reply",
+            toEmail: targetMsg.email,
+            toName: `${targetMsg.firstName} ${targetMsg.lastName}`.trim(),
+            replyBody: inserted.body,
+          }),
+        });
+        if (res.ok) {
+          setToastMsg("Reply sent & emailed!");
+        } else {
+          setToastMsg("Reply saved (email failed)");
+        }
+      } catch {
+        setToastMsg("Reply saved (email failed)");
+      }
+    } else {
+      setToastMsg("Reply sent!");
+    }
     setToast(true);
   };
 

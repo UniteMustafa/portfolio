@@ -174,6 +174,23 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
       ...prev,
       messages: [newMsg, ...prev.messages],
     }));
+
+    // Fire-and-forget: send email notification to owner
+    fetch("/api/send-email", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        action: "notify",
+        firstName: msg.firstName,
+        lastName: msg.lastName,
+        email: msg.email,
+        phone: msg.phone,
+        service: msg.service,
+        message: msg.body,
+      }),
+    }).catch(() => {
+      // Email notification failed silently — message is already saved
+    });
   }, []);
 
   const resetAll = useCallback(async () => {
