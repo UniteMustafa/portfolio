@@ -1,0 +1,89 @@
+/* Font loaded via next/font in layout.tsx for optimal performance */
+
+:root {
+  --color-bg: #1b1b22;
+  --color-bg-secondary: #232329;
+  --color-accent: #00aaff;
+  --color-accent-hover: #0088cc;
+  --color-text: #ffffff;
+  --color-text-muted: #9a9aaa;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  min-height: 100vh;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-jetbrains), 'JetBrains Mono', monospace;
+  overflow-x: hidden;
+}
+
+/* Desktop: allow scrolling for testimonials and other below-fold content */
+
+/* Dashboard needs scrolling, also remove portfolio body glow */
+body.dashboard-page::before {
+  display: none;
+}
+
+
+
+/* Soft green glow overlay on the entire page */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  background: radial-gradient(ellipse 60% 50% at 80% 20%,
+      rgba(0, 170, 255, 0.04) 0%,
+      transparent 70%),
+    radial-gradient(ellipse 40% 40% at 20% 80%,
+      rgba(0, 170, 255, 0.03) 0%,
+      transparent 70%);
+}
+
+/* Tailwind base */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .text-accent {
+    color: var(--color-accent);
+  }
+
+  .bg-bg {
+    background-color: var(--color-bg);
+  }
+
+  .bg-bg-secondary {
+    background-color: var(--color-bg-secondary);
+  }
+
+  .border-accent {
+    border-color: var(--color-accent);
+  }
+
+  .resume-scroll::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .resume-scroll::-webkit-scrollbar-track {
+    background: #1b1b22;
+    border-radius: 8px;
+  }
+
+  .resume-scroll::-webkit-scrollbar-thumb {
+    background: var(--color-accent);
+    border-radius: 8px;
+  }
+}

@@ -1,0 +1,134 @@
+"use client";
+
+import { useState, useCallback } from "react";
+import { motion, Reorder } from "framer-motion";
+import { FiSave, FiPlus, FiTrash2, FiMenu } from "react-icons/fi";
+import { usePortfolio } from "@/data/portfolio-context";
+import Toast from "@/components/dashboard/Toast";
+import type { ServiceItem } from "@/data/portfolio-data";
+
+export default function ServicesPage() {
+  const { data, updateSection } = usePortfolio();
+  const [services, setServices] = useState<ServiceItem[]>(data.services);
+  const [toast, setToast] = useState(false);
+
+  const save = () => {
+    // Re-number them
+    const numbered = services.map((s, i) => ({
+      ...s,
+      num: String(i + 1).padStart(2, "0"),
+    }));
+    updateSection("services", numbered);
+    setServices(numbered);
+    setToast(true);
+  };
+
+  const updateItem = (index: number, field: keyof ServiceItem, value: string) => {
+    setServices((prev) => {
+      const copy = [...prev];
+      copy[index] = { ...copy[index], [field]: value };
+      return copy;
+    });
+  };
+
+  const addService = () => {
+    setServices((prev) => [
+      ...prev,
+      {
+        num: String(prev.length + 1).padStart(2, "0"),
+        title: "New Service",
+        description: "",
+        href: "/contact",
+      },
+    ]);
+  };
+
+  const removeService = (index: number) => {
+    setServices((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const closeToast = useCallback(() => setToast(false), []);
+
+  return (
+    <div className="max-w-[800px] mx-auto space-y-8">
+      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold font-mono text-white">Services</h1>
+          <p className="text-[#9a9aaa] font-mono text-sm mt-1">Manage the services you offer.</p>
+        </div>
+        <button
+          onClick={addService}
+          className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-accent/10 text-accent font-mono text-sm hover:bg-accent/20 transition-colors"
+        >
+          <FiPlus size={16} /> Add Service
+        </button>
+      </motion.div>
+
+      <Reorder.Group axis="y" values={services} onReorder={setServices} className="space-y-4">
+        {services.map((service, i) => (
+          <Reorder.Item key={service.num + service.title} value={service}>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.06 }}
+              className="bg-[#1e1e26] rounded-xl p-5 border border-white/5 space-y-4 cursor-grab active:cursor-grabbing"
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <FiMenu className="text-[#9a9aaa]/40" />
+                  <span className="text-accent font-mono font-bold text-lg">{service.num}</span>
+                </div>
+                <button
+                  onClick={() => removeService(i)}
+                  className="text-red-400/60 hover:text-red-400 transition-colors p-2"
+                >
+                  <FiTrash2 size={16} />
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-[#9a9aaa] font-mono text-xs mb-2">Title</label>
+                  <input
+                    value={service.title}
+                    onChange={(e) => updateItem(i, "title", e.target.value)}
+                    className="w-full bg-[#14141a] text-white p-3 rounded-lg outline-none focus:ring-1 focus:ring-accent transition-all font-mono text-sm border border-white/5"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[#9a9aaa] font-mono text-xs mb-2">Link</label>
+                  <input
+                    value={service.href}
+                    onChange={(e) => updateItem(i, "href", e.target.value)}
+                    className="w-full bg-[#14141a] text-white p-3 rounded-lg outline-none focus:ring-1 focus:ring-accent transition-all font-mono text-sm border border-white/5"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[#9a9aaa] font-mono text-xs mb-2">Description</label>
+                <textarea
+                  rows={2}
+                  value={service.description}
+                  onChange={(e) => updateItem(i, "description", e.target.value)}
+                  className="w-full bg-[#14141a] text-white p-3 rounded-lg outline-none focus:ring-1 focus:ring-accent transition-all font-mono text-sm border border-white/5 resize-none"
+                />
+              </div>
+            </motion.div>
+          </Reorder.Item>
+        ))}
+      </Reorder.Group>
+
+      <motion.button
+        onClick={save}
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
+        className="flex items-center gap-2 px-6 py-3 bg-accent hover:bg-accent-hover text-[#1b1b22] font-bold font-mono text-sm rounded-xl transition-colors"
+      >
+        <FiSave size={16} /> Save Changes
+      </motion.button>
+
+      <Toast message="Services saved!" visible={toast} onClose={closeToast} />
+    </div>
+  );
+}
