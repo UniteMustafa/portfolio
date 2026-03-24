@@ -26,6 +26,7 @@ interface MessageItem {
   lastName: string;
   email: string;
   phone: string;
+  countryCode: string;
   service: string;
   body: string;
   date: string;
@@ -61,6 +62,7 @@ export default function MessagesDashboardPage() {
         lastName: m.last_name,
         email: m.email,
         phone: m.phone,
+        countryCode: m.country_code || "",
         service: m.service,
         body: m.body,
         date: m.created_at,
@@ -276,7 +278,7 @@ export default function MessagesDashboardPage() {
               <div className="flex-1 overflow-y-auto p-6 space-y-6">
                 <div className="flex flex-wrap gap-3 text-[#9a9aaa]/40 font-mono text-xs">
                   <span>{formatDate(selectedMessage.date)}</span>
-                  {selectedMessage.phone && <span>• {selectedMessage.phone}</span>}
+                  {selectedMessage.phone && <span>• {selectedMessage.countryCode ? `${selectedMessage.countryCode} ` : ""}{selectedMessage.phone}</span>}
                   {selectedMessage.service && <span className="text-accent/60 bg-accent/5 px-2 py-0.5 rounded">{selectedMessage.service}</span>}
                 </div>
                 <div className="bg-[#14141a] rounded-lg p-5 border border-white/5">

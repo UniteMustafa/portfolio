@@ -95,6 +95,7 @@ export interface Message {
   lastName: string;
   email: string;
   phone: string;
+  countryCode: string;
   service: string;
   body: string;
   date: string;
