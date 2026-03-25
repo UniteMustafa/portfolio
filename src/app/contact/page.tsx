@@ -115,8 +115,8 @@ export default function ContactPage() {
       setSelectedService("");
       setSent(true);
       setTimeout(() => setSent(false), 5000);
-    } catch (err: any) {
-      setSubmitError(err.message || "Failed to send message. Please try again.");
+    } catch (err: unknown) {
+      setSubmitError(err instanceof Error ? err.message : "Failed to send message. Please try again.");
     } finally {
       setSending(false);
     }

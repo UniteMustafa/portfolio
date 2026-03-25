@@ -12,7 +12,7 @@ export default function SplashScreen() {
     document.body.style.overflow = "hidden";
 
     // Counter logic (0 to 100 in ~2 seconds)
-    let start = Date.now();
+    const start = Date.now();
     const duration = 2000;
     
     const interval = setInterval(() => {

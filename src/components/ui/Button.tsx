@@ -9,7 +9,6 @@ interface ButtonProps {
   variant?: "outline" | "filled";
   children: ReactNode;
   className?: string;
-  download?: boolean;
 }
 
 export default function Button({
@@ -18,7 +17,6 @@ export default function Button({
   variant = "filled",
   children,
   className = "",
-  download,
 }: ButtonProps) {
   const base =
     "inline-flex items-center gap-2 px-6 py-3 rounded-full text-xs font-bold font-mono tracking-widest transition-all";
