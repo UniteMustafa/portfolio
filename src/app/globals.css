@@ -5,6 +5,7 @@
   --color-bg-secondary: #232329;
   --color-accent: #00aaff;
   --color-accent-hover: #0088cc;
+  --color-accent-glow: rgba(0, 170, 255, 0.08);
   --color-text: #ffffff;
   --color-text-muted: #9a9aaa;
 }

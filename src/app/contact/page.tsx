@@ -31,6 +31,7 @@ export default function ContactPage() {
   );
   const [countrySearch, setCountrySearch] = useState("");
   const [message, setMessage] = useState("");
+  const [submitError, setSubmitError] = useState("");
   const [sent, setSent] = useState(false);
 
   const countryRef = useRef<HTMLDivElement>(null);
@@ -84,30 +85,37 @@ export default function ContactPage() {
       return;
     }
 
-    await addMessage({
-      firstName: firstName.trim(),
-      lastName: lastName.trim(),
-      email: email.trim(),
-      phone: phone.trim(),
-      countryCode: countryCode.dial,
-      service: selectedService,
-      body: message.trim(),
-      date: new Date().toISOString(),
-      read: false,
-      replies: [],
-    });
+    setSubmitError("");
+    setSent(false);
 
-    // Reset form
-    setFirstName("");
-    setLastName("");
-    setEmail("");
-    setEmailError("");
-    setPhone("");
-    setCountryCode(countryCodes.find((c) => c.code === "EG") || countryCodes[0]);
-    setMessage("");
-    setSelectedService("");
-    setSent(true);
-    setTimeout(() => setSent(false), 3000);
+    try {
+      await addMessage({
+        firstName: firstName.trim(),
+        lastName: lastName.trim(),
+        email: email.trim(),
+        phone: phone.trim(),
+        countryCode: countryCode.dial,
+        service: selectedService,
+        body: message.trim(),
+        date: new Date().toISOString(),
+        read: false,
+        replies: [],
+      });
+
+      // Reset form
+      setFirstName("");
+      setLastName("");
+      setEmail("");
+      setEmailError("");
+      setPhone("");
+      setCountryCode(countryCodes.find((c) => c.code === "EG") || countryCodes[0]);
+      setMessage("");
+      setSelectedService("");
+      setSent(true);
+      setTimeout(() => setSent(false), 5000);
+    } catch (err: any) {
+      setSubmitError(err.message || "Failed to send message. Please try again.");
+    }
   };
 
   return (
@@ -321,24 +329,39 @@ export default function ContactPage() {
             />
 
             {/* Submit Button */}
-            <button
-              onClick={handleSubmit}
-              disabled={sent || !!emailError}
-              className={`w-max px-8 py-3.5 mt-2 font-bold rounded-full transition-all font-mono flex items-center gap-2 ${sent
-                ? "bg-green-500 text-white cursor-default"
-                : emailError
-                  ? "bg-accent/40 text-[#1b1b22]/60 cursor-not-allowed"
-                  : "text-[#1b1b22] bg-accent hover:bg-accent-hover"
-                }`}
-            >
-              {sent ? (
-                <>
-                  <FiCheck size={16} /> Message Sent!
-                </>
-              ) : (
-                "Send message"
-              )}
-            </button>
+            <div className="flex flex-col gap-3 mt-2">
+              <button
+                onClick={handleSubmit}
+                disabled={sent || !!emailError}
+                className={`w-max px-8 py-3.5 font-bold rounded-full transition-all font-mono flex items-center gap-2 ${sent
+                  ? "bg-green-500 text-white cursor-default"
+                  : emailError
+                    ? "bg-accent/40 text-[#1b1b22]/60 cursor-not-allowed"
+                    : "text-[#1b1b22] bg-accent hover:bg-accent-hover"
+                  }`}
+              >
+                {sent ? (
+                  <>
+                    <FiCheck size={16} /> Message Sent!
+                  </>
+                ) : (
+                  "Send message"
+                )}
+              </button>
+              <AnimatePresence>
+                {submitError && (
+                  <motion.p
+                    initial={{ opacity: 0, y: -4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -4 }}
+                    className="flex items-center gap-1.5 text-red-400 font-mono text-xs pl-1"
+                  >
+                    <FiAlertCircle size={14} />
+                    {submitError}
+                  </motion.p>
+                )}
+              </AnimatePresence>
+            </div>
           </div>
 
           {/* Right Block (Contact Info) */}

@@ -27,7 +27,7 @@ export default function Toast({ message, visible, onClose }: ToastProps) {
           exit={{ opacity: 0, y: 40, scale: 0.95 }}
           className="fixed bottom-6 right-6 z-[200] flex items-center gap-3 px-5 py-3.5 rounded-xl font-mono text-sm shadow-2xl border border-accent/20"
           style={{
-            backgroundColor: "rgba(0, 170, 255, 0.1)",
+            backgroundColor: "color-mix(in srgb, var(--color-accent) 10%, transparent)",
             backdropFilter: "blur(16px)",
             color: "var(--color-accent)",
           }}

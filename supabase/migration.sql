@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS messages (
   last_name TEXT DEFAULT '',
   email TEXT NOT NULL,
   phone TEXT DEFAULT '',
+  country_code TEXT DEFAULT '',
   service TEXT DEFAULT '',
   body TEXT NOT NULL,
   read BOOLEAN NOT NULL DEFAULT false,
@@ -103,7 +104,7 @@ INSERT INTO site_sections (key, value) VALUES
   "name": "Mustafa Ali",
   "subtitle": "Software Developer",
   "description": "I excel at crafting elegant digital experiences and I am proficient in various programming languages and technologies. I specialize in building responsive, high-performance web applications that seamlessly blend beautiful design with robust logic.",
-  "photoUrl": "/assets/Mustafa Image.jpeg",
+  "photoUrl": "/assets/mustafa-photo.jpeg",
   "socialLinks": [
     {"iconKey": "github", "href": "https://github.com", "label": "GitHub"},
     {"iconKey": "linkedin", "href": "https://linkedin.com", "label": "LinkedIn"},

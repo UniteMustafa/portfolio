@@ -106,7 +106,7 @@ export default function DashboardPage() {
             >
               <Link
                 href={section.href}
-                className="block bg-[#1e1e26] rounded-xl p-5 border border-white/5 hover:border-accent/30 transition-all duration-300 group hover:shadow-[0_0_30px_rgba(0,170,255,0.06)]"
+                className="block bg-[#1e1e26] rounded-xl p-5 border border-white/5 hover:border-accent/30 transition-all duration-300 group hover:shadow-[0_0_30px_var(--color-accent-glow)]"
               >
                 <div className="flex items-center justify-between mb-3">
                   <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center group-hover:bg-accent/20 transition-colors">

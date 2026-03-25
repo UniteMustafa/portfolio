@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   FiCalendar,
@@ -140,15 +141,16 @@ export default function BlogPage() {
                   >
                     <Link
                       href={`/blog/${post.slug}`}
-                      className="group block bg-[#232329] rounded-2xl overflow-hidden border border-white/5 hover:border-accent/20 transition-all duration-300 hover:shadow-[0_0_40px_rgba(0,170,255,0.06)]"
+                      className="group block bg-[#232329] rounded-2xl overflow-hidden border border-white/5 hover:border-accent/20 transition-all duration-300 hover:shadow-[0_0_40px_var(--color-accent-glow)]"
                     >
                       {/* Cover image or gradient fallback */}
                       {post.coverImage ? (
-                        <div className="h-[250px] md:h-[300px] overflow-hidden">
-                          <img
+                        <div className="h-[250px] md:h-[300px] overflow-hidden relative">
+                          <Image
                             src={post.coverImage}
                             alt={post.title}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                            fill
+                            className="object-cover group-hover:scale-105 transition-transform duration-500"
                           />
                         </div>
                       ) : (
@@ -156,7 +158,7 @@ export default function BlogPage() {
                           className="h-[250px] md:h-[300px] flex items-center justify-center"
                           style={{
                             background:
-                              "linear-gradient(135deg, rgba(0,170,255,0.1) 0%, rgba(0,170,255,0.02) 100%)",
+                              "linear-gradient(135deg, color-mix(in srgb, var(--color-accent) 10%, transparent) 0%, color-mix(in srgb, var(--color-accent) 2%, transparent) 100%)",
                           }}
                         >
                           <FiBookOpen

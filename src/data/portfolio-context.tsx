@@ -18,7 +18,7 @@ function darkenColor(hex: string, percent: number): string {
 interface PortfolioContextValue {
   data: PortfolioData;
   updateSection: <K extends keyof PortfolioData>(key: K, value: PortfolioData[K]) => void;
-  addMessage: (msg: Omit<Message, "id">) => void;
+  addMessage: (msg: Omit<Message, "id">) => Promise<void>;
   resetAll: () => void;
   loading: boolean;
 }
@@ -125,6 +125,12 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
       // Derive a darker hover color by reducing brightness
       const hoverColor = darkenColor(accent, 20);
       document.documentElement.style.setProperty("--color-accent-hover", hoverColor);
+      // Generate a subtle glow color for box-shadow use in Tailwind
+      const num = parseInt(accent.replace("#", ""), 16);
+      const r = (num >> 16) & 0xff;
+      const g = (num >> 8) & 0xff;
+      const b = num & 0xff;
+      document.documentElement.style.setProperty("--color-accent-glow", `rgba(${r}, ${g}, ${b}, 0.08)`);
     }
   }, [data.settings?.accentColor]);
 
@@ -157,7 +163,27 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
   );
 
   const addMessage = useCallback(async (msg: Omit<Message, "id">) => {
-    // Insert into Supabase messages table
+    // 1. Send email notification (and trigger rate limiting check)
+    const emailRes = await fetch("/api/send-email", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        action: "notify",
+        firstName: msg.firstName,
+        lastName: msg.lastName,
+        email: msg.email,
+        phone: msg.phone,
+        service: msg.service,
+        message: msg.body,
+      }),
+    });
+
+    if (emailRes.status === 429) {
+      const data = await emailRes.json();
+      throw new Error(data.error || "Too many requests. Please try again in a minute.");
+    }
+
+    // 2. Insert into Supabase messages table
     const { data: inserted, error } = await supabase
       .from("messages")
       .insert({
@@ -175,7 +201,7 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
 
     if (error) {
       console.error("Error inserting message:", error);
-      return;
+      throw new Error("Failed to save message to database.");
     }
 
     // Add to local state
@@ -197,23 +223,6 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
       ...prev,
       messages: [newMsg, ...prev.messages],
     }));
-
-    // Fire-and-forget: send email notification to owner
-    fetch("/api/send-email", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        action: "notify",
-        firstName: msg.firstName,
-        lastName: msg.lastName,
-        email: msg.email,
-        phone: msg.phone,
-        service: msg.service,
-        message: msg.body,
-      }),
-    }).catch(() => {
-      // Email notification failed silently — message is already saved
-    });
   }, []);
 
   const resetAll = useCallback(async () => {

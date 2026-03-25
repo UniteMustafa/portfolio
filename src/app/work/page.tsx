@@ -67,7 +67,7 @@ export default function WorkPage() {
                   return (
                     <li 
                       key={index} 
-                      className="text-accent bg-accent/10 px-4 py-1.5 rounded-lg font-mono text-sm shadow-[0_0_10px_rgba(0,170,255,0.1)] border border-accent/20 transition-all hover:-translate-y-1 hover:bg-accent/20"
+                      className="text-accent bg-accent/10 px-4 py-1.5 rounded-lg font-mono text-sm shadow-[0_0_10px_var(--color-accent-glow)] border border-accent/20 transition-all hover:-translate-y-1 hover:bg-accent/20"
                     >
                       {item.name}
                     </li>

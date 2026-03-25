@@ -22,6 +22,7 @@ import {
   FiEdit3,
 } from "react-icons/fi";
 import { supabase } from "@/lib/supabase";
+import { usePortfolio } from "@/data/portfolio-context";
 
 const sidebarLinks = [
   { name: "Overview", href: "/dashboard", icon: FiHome },
@@ -92,6 +93,27 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     return (
       <div className="flex h-screen items-center justify-center" style={{ backgroundColor: "var(--color-bg)" }}>
         <div className="w-8 h-8 border-2 border-accent/30 border-t-accent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  return <DashboardContent handleLogout={handleLogout} pathname={pathname} sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen}>{children}</DashboardContent>;
+}
+
+function DashboardContent({ children, handleLogout, pathname, sidebarOpen, setSidebarOpen }: {
+  children: React.ReactNode;
+  handleLogout: () => void;
+  pathname: string;
+  sidebarOpen: boolean;
+  setSidebarOpen: (v: boolean) => void;
+}) {
+  const { loading } = usePortfolio();
+
+  if (loading) {
+    return (
+      <div className="flex h-screen items-center justify-center flex-col gap-3" style={{ backgroundColor: "var(--color-bg)" }}>
+        <div className="w-8 h-8 border-2 border-accent/30 border-t-accent rounded-full animate-spin" />
+        <p className="text-[#9a9aaa] font-mono text-xs">Loading portfolio data...</p>
       </div>
     );
   }

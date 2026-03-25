@@ -152,7 +152,7 @@ export default function Navbar() {
                       href={link.href}
                       className={`text-4xl sm:text-5xl font-bold font-mono transition-all duration-300 inline-block ${
                         isActive 
-                          ? "text-accent scale-110 drop-shadow-[0_0_15px_rgba(0,170,255,0.4)]" 
+                          ? "text-accent scale-110" 
                           : "text-white/60 hover:text-white hover:scale-105"
                       }`}
                     >

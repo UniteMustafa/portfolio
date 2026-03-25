@@ -39,7 +39,7 @@ export const metadata: Metadata = {
       "Portfolio of Mustafa Ali — Software Developer specializing in elegant digital experiences.",
     images: [
       {
-        url: "/assets/Mustafa Image.jpeg",
+        url: "/assets/mustafa-photo.jpeg",
         width: 1200,
         height: 630,
         alt: "Mustafa Ali — Software Developer",
@@ -51,7 +51,7 @@ export const metadata: Metadata = {
     title: "Mustafa Ali — Software Developer",
     description:
       "Portfolio of Mustafa Ali — Software Developer specializing in elegant digital experiences.",
-    images: ["/assets/Mustafa Image.jpeg"],
+    images: ["/assets/mustafa-photo.jpeg"],
   },
   robots: {
     index: true,

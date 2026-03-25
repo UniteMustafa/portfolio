@@ -55,9 +55,10 @@ export default function Hero() {
                   initial={{ backgroundPosition: "200% center" }}
                   animate={{ backgroundPosition: "-200% center" }}
                   transition={{ repeat: Infinity, duration: 4, ease: "linear" }}
-                  className="bg-clip-text text-transparent bg-[length:200%_auto] tracking-tight drop-shadow-[0_0_15px_rgba(0,170,255,0.3)]"
+                  className="bg-clip-text text-transparent bg-[length:200%_auto] tracking-tight"
                   style={{
                     backgroundImage: "linear-gradient(110deg, var(--color-accent) 0%, var(--color-accent) 40%, #ffffff 50%, var(--color-accent) 60%, var(--color-accent) 100%)",
+                    filter: "drop-shadow(0 0 15px color-mix(in srgb, var(--color-accent) 30%, transparent))",
                   }}
                 >
                   {name}
@@ -206,7 +207,7 @@ export default function Hero() {
             {/* Profile Image */}
             <div
               className="absolute inset-[10%] rounded-full overflow-hidden border-2"
-              style={{ borderColor: "var(--color-accent)", boxShadow: "0 0 50px rgba(0,170,255,0.18)" }}
+              style={{ borderColor: "var(--color-accent)", boxShadow: "0 0 50px color-mix(in srgb, var(--color-accent) 18%, transparent)" }}
             >
               <Image
                 src={photoUrl}

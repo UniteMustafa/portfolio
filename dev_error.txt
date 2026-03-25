@@ -1,0 +1,46 @@
+﻿npx : C:\Mustafa Ali\Projec
+ts\portfolio\node_modules\n
+ext\dist\server\config.js:7
+87
+At line:1 char:1
++ npx next dev 2>&1 | 
+Out-File -Encoding utf8 
+dev_error.txt; Get-Conten 
+...
++ ~~~~~~~~~~~~~~~~~
+    + CategoryInfo         
+     : NotSpecified: (C:\  
+  Mustafa Ali\...r\confi   
+ g.js:787:String) [], R    
+emoteException
+    + FullyQualifiedErrorI 
+   d : NativeCommandError
+ 
+            throw new 
+Error(`Configuring Next.js 
+via '${(0, _path.basename)(
+nonJsPath)}' is not 
+supported. Please replace 
+the file with 
+'next.config.js' or 
+'next.config.mjs'.`);
+                  ^
+
+Error: Configuring Next.js 
+via 'next.config.ts' is 
+not supported. Please 
+replace the file with 
+'next.config.js' or 
+'next.config.mjs'.
+    at loadConfig 
+(C:\Mustafa Ali\Projects\po
+rtfolio\node_modules\next\d
+ist\server\config.js:787:19
+)
+    at async 
+Module.nextDev (C:\Mustafa 
+Ali\Projects\portfolio\node
+_modules\next\dist\cli\next
+-dev.js:175:14)
+
+Node.js v20.20.1

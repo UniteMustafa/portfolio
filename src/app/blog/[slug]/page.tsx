@@ -3,6 +3,7 @@
 import { useMemo } from "react";
 import { notFound, useParams } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { FiArrowLeft, FiCalendar, FiClock } from "react-icons/fi";
 import { usePortfolio } from "@/data/portfolio-context";
@@ -118,12 +119,13 @@ export default function BlogPostPage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0, transition: { delay: 0.25 } }}
-            className="w-full h-[300px] md:h-[400px] rounded-2xl overflow-hidden mb-10 border border-white/5"
+            className="w-full h-[300px] md:h-[400px] rounded-2xl overflow-hidden mb-10 border border-white/5 relative"
           >
-            <img
+            <Image
               src={post.coverImage}
               alt={post.title}
-              className="w-full h-full object-cover"
+              fill
+              className="object-cover"
             />
           </motion.div>
         )}

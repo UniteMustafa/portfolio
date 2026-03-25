@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
 import { FiStar } from "react-icons/fi";
 import { usePortfolio } from "@/data/portfolio-context";
 
@@ -77,16 +78,18 @@ export default function Testimonials() {
                 {/* Author */}
                 <div className="flex items-center gap-3 pt-4 border-t border-white/5">
                   {t.avatar ? (
-                    <img
+                    <Image
                       src={t.avatar}
                       alt={t.name}
+                      width={40}
+                      height={40}
                       className="w-10 h-10 rounded-full object-cover"
                     />
                   ) : (
                     <div
                       className="w-10 h-10 rounded-full flex items-center justify-center font-mono font-bold text-xs"
                       style={{
-                        backgroundColor: "rgba(0,170,255,0.15)",
+                        backgroundColor: "color-mix(in srgb, var(--color-accent) 15%, transparent)",
                         color: "var(--color-accent)",
                       }}
                     >

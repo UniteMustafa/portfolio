@@ -75,7 +75,7 @@ export default function SplashScreen() {
               viewBox="0 0 100 100" 
               className="mb-8"
               initial={{ filter: "drop-shadow(0px 0px 0px var(--color-accent))" }}
-              animate={{ filter: "drop-shadow(0px 0px 20px rgba(0,170,255,0.4))" }}
+              animate={{ filter: "drop-shadow(0px 0px 20px color-mix(in srgb, var(--color-accent) 40%, transparent))" }}
               transition={{ delay: 2.2, duration: 0.4 }}
             >
               {/* Outer circle spinning */}
