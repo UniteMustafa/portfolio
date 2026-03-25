@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import { FiPlus, FiTrash2, FiSave, FiEye, FiEyeOff } from "react-icons/fi";
 import { usePortfolio } from "@/data/portfolio-context";
@@ -14,6 +14,8 @@ export default function BlogDashboardPage() {
   const [toast, setToast] = useState(false);
   const [toastMsg, setToastMsg] = useState("Blog posts saved!");
   const closeToast = useCallback(() => setToast(false), []);
+  const bottomRef = useRef<HTMLDivElement>(null);
+  const [justAdded, setJustAdded] = useState(false);
 
   const addPost = () => {
     const id = `bp_${Date.now()}`;
@@ -31,7 +33,17 @@ export default function BlogDashboardPage() {
         published: false,
       },
     ]);
+    setJustAdded(true);
+    setToastMsg("New post added! Scroll down to edit it.");
+    setToast(true);
   };
+
+  useEffect(() => {
+    if (justAdded && bottomRef.current) {
+      bottomRef.current.scrollIntoView({ behavior: "smooth", block: "end" });
+      setJustAdded(false);
+    }
+  }, [justAdded, posts.length]);
 
   const updatePost = (index: number, field: keyof BlogPost, value: unknown) => {
     const updated = [...posts];
@@ -200,6 +212,8 @@ export default function BlogDashboardPage() {
           </div>
         </motion.div>
       ))}
+
+      <div ref={bottomRef} />
 
       <motion.button
         onClick={save}

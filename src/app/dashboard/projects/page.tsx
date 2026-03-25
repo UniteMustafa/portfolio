@@ -1,16 +1,19 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
-import { FiSave, FiPlus, FiTrash2, FiX } from "react-icons/fi";
+import { FiSave, FiPlus, FiTrash2, FiX, FiCheck } from "react-icons/fi";
 import { usePortfolio } from "@/data/portfolio-context";
 import Toast from "@/components/dashboard/Toast";
+import ImageUploader from "@/components/dashboard/ImageUploader";
 import type { ProjectItem } from "@/data/portfolio-data";
 
 export default function ProjectsPage() {
   const { data, updateSection } = usePortfolio();
   const [projects, setProjects] = useState<ProjectItem[]>(data.projects);
   const [toast, setToast] = useState(false);
+  const [toastMsg, setToastMsg] = useState("Projects saved!");
+  const bottomRef = useRef<HTMLDivElement>(null);
 
   const save = () => {
     const numbered = projects.map((p, i) => ({
@@ -19,6 +22,7 @@ export default function ProjectsPage() {
     }));
     updateSection("projects", numbered);
     setProjects(numbered);
+    setToastMsg("Projects saved!");
     setToast(true);
   };
 
@@ -62,6 +66,8 @@ export default function ProjectsPage() {
     });
   };
 
+  const [justAdded, setJustAdded] = useState(false);
+
   const addProject = () => {
     setProjects((prev) => [
       ...prev,
@@ -76,7 +82,18 @@ export default function ProjectsPage() {
         github: "",
       },
     ]);
+    setJustAdded(true);
+    setToastMsg("New project added! Scroll down to edit it.");
+    setToast(true);
   };
+
+  // Scroll to new project when added
+  useEffect(() => {
+    if (justAdded && bottomRef.current) {
+      bottomRef.current.scrollIntoView({ behavior: "smooth", block: "end" });
+      setJustAdded(false);
+    }
+  }, [justAdded, projects.length]);
 
   const removeProject = (index: number) => {
     setProjects((prev) => prev.filter((_, i) => i !== index));
@@ -89,7 +106,7 @@ export default function ProjectsPage() {
       <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold font-mono text-white">Projects</h1>
-          <p className="text-[#9a9aaa] font-mono text-sm mt-1">Manage your portfolio projects.</p>
+          <p className="text-muted font-mono text-sm mt-1">Manage your portfolio projects.</p>
         </div>
         <button
           onClick={addProject}
@@ -120,7 +137,7 @@ export default function ProjectsPage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-[#9a9aaa] font-mono text-xs mb-2">Title</label>
+                <label className="block text-muted font-mono text-xs mb-2">Title</label>
                 <input
                   value={project.title}
                   onChange={(e) => updateItem(i, "title", e.target.value)}
@@ -128,7 +145,7 @@ export default function ProjectsPage() {
                 />
               </div>
               <div>
-                <label className="block text-[#9a9aaa] font-mono text-xs mb-2">Category</label>
+                <label className="block text-muted font-mono text-xs mb-2">Category</label>
                 <input
                   value={project.category}
                   onChange={(e) => updateItem(i, "category", e.target.value)}
@@ -138,7 +155,7 @@ export default function ProjectsPage() {
             </div>
 
             <div>
-              <label className="block text-[#9a9aaa] font-mono text-xs mb-2">Description</label>
+              <label className="block text-muted font-mono text-xs mb-2">Description</label>
               <textarea
                 rows={2}
                 value={project.description}
@@ -147,17 +164,18 @@ export default function ProjectsPage() {
               />
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {/* Project Image — file upload */}
+            <div>
+              <label className="block text-muted font-mono text-xs mb-2">Project Image</label>
+              <ImageUploader
+                value={project.image}
+                onChange={(url) => updateItem(i, "image", url)}
+              />
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-[#9a9aaa] font-mono text-xs mb-2">Image Path</label>
-                <input
-                  value={project.image}
-                  onChange={(e) => updateItem(i, "image", e.target.value)}
-                  className="w-full bg-[#14141a] text-white p-3 rounded-lg outline-none focus:ring-1 focus:ring-accent transition-all font-mono text-sm border border-white/5"
-                />
-              </div>
-              <div>
-                <label className="block text-[#9a9aaa] font-mono text-xs mb-2">Live URL</label>
+                <label className="block text-muted font-mono text-xs mb-2">Live URL</label>
                 <input
                   value={project.live}
                   onChange={(e) => updateItem(i, "live", e.target.value)}
@@ -165,7 +183,7 @@ export default function ProjectsPage() {
                 />
               </div>
               <div>
-                <label className="block text-[#9a9aaa] font-mono text-xs mb-2">GitHub URL</label>
+                <label className="block text-muted font-mono text-xs mb-2">GitHub URL</label>
                 <input
                   value={project.github}
                   onChange={(e) => updateItem(i, "github", e.target.value)}
@@ -177,7 +195,7 @@ export default function ProjectsPage() {
             {/* Stack / Technologies */}
             <div>
               <div className="flex items-center justify-between mb-2">
-                <label className="text-[#9a9aaa] font-mono text-xs">Tech Stack</label>
+                <label className="text-muted font-mono text-xs">Tech Stack</label>
                 <button
                   onClick={() => addStackItem(i)}
                   className="text-accent font-mono text-xs hover:underline"
@@ -211,16 +229,19 @@ export default function ProjectsPage() {
         ))}
       </div>
 
+      {/* Scroll anchor */}
+      <div ref={bottomRef} />
+
       <motion.button
         onClick={save}
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
-        className="flex items-center gap-2 px-6 py-3 bg-accent hover:bg-accent-hover text-[#1b1b22] font-bold font-mono text-sm rounded-xl transition-colors"
+        className="flex items-center gap-2 px-6 py-3 bg-accent hover:bg-accent-hover text-bg font-bold font-mono text-sm rounded-xl transition-colors"
       >
         <FiSave size={16} /> Save Changes
       </motion.button>
 
-      <Toast message="Projects saved!" visible={toast} onClose={closeToast} />
+      <Toast message={toastMsg} visible={toast} onClose={closeToast} />
     </div>
   );
 }

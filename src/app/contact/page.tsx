@@ -21,6 +21,7 @@ type CountryCode = (typeof countryCodes)[number];
 
 interface FormState {
   firstName: string;
+  firstNameError: string;
   lastName: string;
   email: string;
   emailError: string;
@@ -28,6 +29,7 @@ interface FormState {
   countryCode: CountryCode;
   countrySearch: string;
   message: string;
+  messageError: string;
   selectedService: string;
   submitError: string;
   sent: boolean;
@@ -50,6 +52,7 @@ const defaultCountry = countryCodes.find((c) => c.code === "EG") || countryCodes
 
 const initialState: FormState = {
   firstName: "",
+  firstNameError: "",
   lastName: "",
   email: "",
   emailError: "",
@@ -57,6 +60,7 @@ const initialState: FormState = {
   countryCode: defaultCountry,
   countrySearch: "",
   message: "",
+  messageError: "",
   selectedService: "",
   submitError: "",
   sent: false,
@@ -129,8 +133,28 @@ export default function ContactPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.firstName.trim() || !form.email.trim() || !form.message.trim()) return;
-    if (!validateEmail(form.email)) return;
+
+    // Per-field validation messages
+    let hasError = false;
+    if (!form.firstName.trim()) {
+      dispatch({ type: "SET_FIELD", field: "firstNameError", value: "First name is required" });
+      hasError = true;
+    } else {
+      dispatch({ type: "SET_FIELD", field: "firstNameError", value: "" });
+    }
+    if (!form.email.trim()) {
+      dispatch({ type: "SET_FIELD", field: "emailError", value: "Email address is required" });
+      hasError = true;
+    } else if (!validateEmail(form.email)) {
+      hasError = true;
+    }
+    if (!form.message.trim()) {
+      dispatch({ type: "SET_FIELD", field: "messageError", value: "Please write a message" });
+      hasError = true;
+    } else {
+      dispatch({ type: "SET_FIELD", field: "messageError", value: "" });
+    }
+    if (hasError) return;
 
     dispatch({ type: "SET_FIELD", field: "submitError", value: "" });
     dispatch({ type: "SET_FIELD", field: "sending", value: true });
@@ -187,14 +211,34 @@ export default function ContactPage() {
             <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-6">
               {/* Inputs Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-                <input
-                  type="text"
-                  placeholder="Firstname *"
-                  value={form.firstName}
-                  onChange={(e) => dispatch({ type: "SET_FIELD", field: "firstName", value: e.target.value })}
-                  required
-                  className="w-full bg-bg text-white p-4 rounded-lg outline-none focus:ring-1 focus:ring-accent transition-all placeholder:text-white/40 font-mono text-sm"
-                />
+                <div className="flex flex-col gap-1">
+                  <input
+                    type="text"
+                    placeholder="Firstname *"
+                    value={form.firstName}
+                    onChange={(e) => {
+                      dispatch({ type: "SET_FIELD", field: "firstName", value: e.target.value });
+                      if (form.firstNameError) dispatch({ type: "SET_FIELD", field: "firstNameError", value: "" });
+                    }}
+                    required
+                    className={`w-full bg-bg text-white p-4 rounded-lg outline-none focus:ring-1 transition-all placeholder:text-white/40 font-mono text-sm ${
+                      form.firstNameError ? "ring-1 ring-red-500/60 focus:ring-red-500" : "focus:ring-accent"
+                    }`}
+                  />
+                  <AnimatePresence>
+                    {form.firstNameError && (
+                      <motion.p
+                        initial={{ opacity: 0, y: -4 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -4 }}
+                        className="flex items-center gap-1.5 text-red-400 font-mono text-xs pl-1"
+                      >
+                        <FiAlertCircle size={12} />
+                        {form.firstNameError}
+                      </motion.p>
+                    )}
+                  </AnimatePresence>
+                </div>
                 <input
                   type="text"
                   placeholder="Lastname"
@@ -365,14 +409,34 @@ export default function ContactPage() {
               </div>
 
               {/* Message Textarea */}
-              <textarea
-                rows={5}
-                placeholder="Your message *"
-                value={form.message}
-                onChange={(e) => dispatch({ type: "SET_FIELD", field: "message", value: e.target.value })}
-                required
-                className="w-full bg-bg text-white p-4 rounded-lg outline-none focus:ring-1 focus:ring-accent transition-all placeholder:text-white/40 font-mono text-sm resize-none"
-              />
+              <div className="flex flex-col gap-1">
+                <textarea
+                  rows={5}
+                  placeholder="Your message *"
+                  value={form.message}
+                  onChange={(e) => {
+                    dispatch({ type: "SET_FIELD", field: "message", value: e.target.value });
+                    if (form.messageError) dispatch({ type: "SET_FIELD", field: "messageError", value: "" });
+                  }}
+                  required
+                  className={`w-full bg-bg text-white p-4 rounded-lg outline-none focus:ring-1 transition-all placeholder:text-white/40 font-mono text-sm resize-none ${
+                    form.messageError ? "ring-1 ring-red-500/60 focus:ring-red-500" : "focus:ring-accent"
+                  }`}
+                />
+                <AnimatePresence>
+                  {form.messageError && (
+                    <motion.p
+                      initial={{ opacity: 0, y: -4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -4 }}
+                      className="flex items-center gap-1.5 text-red-400 font-mono text-xs pl-1"
+                    >
+                      <FiAlertCircle size={12} />
+                      {form.messageError}
+                    </motion.p>
+                  )}
+                </AnimatePresence>
+              </div>
 
               {/* Submit Button */}
               <div className="flex flex-col gap-3">

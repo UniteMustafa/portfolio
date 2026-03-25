@@ -61,16 +61,33 @@ export default function BlogPostPage() {
         {/* Back */}
         <Link
           href="/blog"
-          className="inline-flex items-center gap-2 text-[#9a9aaa] hover:text-accent font-mono text-sm transition-colors mb-8"
+          className="inline-flex items-center gap-2 text-muted hover:text-accent font-mono text-sm transition-colors mb-8"
         >
           <FiArrowLeft size={16} />
           Back to Blog
         </Link>
 
+        {/* Cover image — shown first, before the title */}
+        {post.coverImage && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0, transition: { delay: 0.1 } }}
+            className="w-full aspect-video rounded-2xl overflow-hidden mb-8 border border-white/5 relative"
+          >
+            <Image
+              src={post.coverImage}
+              alt={post.title}
+              fill
+              className="object-cover"
+              sizes="(max-width: 800px) 100vw, 800px"
+            />
+          </motion.div>
+        )}
+
         {/* Tags */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0, transition: { delay: 0.1 } }}
+          animate={{ opacity: 1, y: 0, transition: { delay: 0.15 } }}
           className="flex flex-wrap gap-2 mb-4"
         >
           {post.tags.map((tag) => (
@@ -86,7 +103,7 @@ export default function BlogPostPage() {
         {/* Title */}
         <motion.h1
           initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0, transition: { delay: 0.15 } }}
+          animate={{ opacity: 1, y: 0, transition: { delay: 0.2 } }}
           className="text-3xl md:text-4xl font-bold font-mono text-white mb-4 leading-tight"
         >
           {post.title}
@@ -95,40 +112,18 @@ export default function BlogPostPage() {
         {/* Meta */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0, transition: { delay: 0.2 } }}
+          animate={{ opacity: 1, y: 0, transition: { delay: 0.25 } }}
           className="flex items-center gap-5 mb-10 pb-8 border-b border-white/5"
         >
-          <span
-            className="flex items-center gap-2 font-mono text-xs"
-            style={{ color: "var(--color-text-muted)" }}
-          >
+          <span className="flex items-center gap-2 font-mono text-xs text-muted">
             <FiCalendar size={12} />
             {formatDate(post.publishedAt)}
           </span>
-          <span
-            className="flex items-center gap-2 font-mono text-xs"
-            style={{ color: "var(--color-text-muted)" }}
-          >
+          <span className="flex items-center gap-2 font-mono text-xs text-muted">
             <FiClock size={12} />
             {readTime} min read
           </span>
         </motion.div>
-
-        {/* Cover image */}
-        {post.coverImage && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0, transition: { delay: 0.25 } }}
-            className="w-full h-[300px] md:h-[400px] rounded-2xl overflow-hidden mb-10 border border-white/5 relative"
-          >
-            <Image
-              src={post.coverImage}
-              alt={post.title}
-              fill
-              className="object-cover"
-            />
-          </motion.div>
-        )}
 
         {/* Content */}
         <motion.article

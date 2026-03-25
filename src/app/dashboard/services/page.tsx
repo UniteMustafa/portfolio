@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { motion, Reorder } from "framer-motion";
 import { FiSave, FiPlus, FiTrash2, FiMenu } from "react-icons/fi";
 import { usePortfolio } from "@/data/portfolio-context";
@@ -11,6 +11,9 @@ export default function ServicesPage() {
   const { data, updateSection } = usePortfolio();
   const [services, setServices] = useState<ServiceItem[]>(data.services);
   const [toast, setToast] = useState(false);
+  const [toastMsg, setToastMsg] = useState("Services saved!");
+  const bottomRef = useRef<HTMLDivElement>(null);
+  const [justAdded, setJustAdded] = useState(false);
 
   const save = () => {
     // Re-number them
@@ -20,6 +23,7 @@ export default function ServicesPage() {
     }));
     updateSection("services", numbered);
     setServices(numbered);
+    setToastMsg("Services saved!");
     setToast(true);
   };
 
@@ -41,7 +45,17 @@ export default function ServicesPage() {
         href: "/contact",
       },
     ]);
+    setJustAdded(true);
+    setToastMsg("New service added! Scroll down to edit it.");
+    setToast(true);
   };
+
+  useEffect(() => {
+    if (justAdded && bottomRef.current) {
+      bottomRef.current.scrollIntoView({ behavior: "smooth", block: "end" });
+      setJustAdded(false);
+    }
+  }, [justAdded, services.length]);
 
   const removeService = (index: number) => {
     setServices((prev) => prev.filter((_, i) => i !== index));
@@ -119,16 +133,18 @@ export default function ServicesPage() {
         ))}
       </Reorder.Group>
 
+      <div ref={bottomRef} />
+
       <motion.button
         onClick={save}
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
-        className="flex items-center gap-2 px-6 py-3 bg-accent hover:bg-accent-hover text-[#1b1b22] font-bold font-mono text-sm rounded-xl transition-colors"
+        className="flex items-center gap-2 px-6 py-3 bg-accent hover:bg-accent-hover text-bg font-bold font-mono text-sm rounded-xl transition-colors"
       >
         <FiSave size={16} /> Save Changes
       </motion.button>
 
-      <Toast message="Services saved!" visible={toast} onClose={closeToast} />
+      <Toast message={toastMsg} visible={toast} onClose={closeToast} />
     </div>
   );
 }
