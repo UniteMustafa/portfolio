@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { FiMenu, FiX } from "react-icons/fi";
@@ -75,6 +75,27 @@ function DashboardContent({
   setSidebarOpen: (v: boolean) => void;
 }) {
   const { loading, data } = usePortfolio();
+  const pathname = usePathname();
+  const mainRef = useRef<HTMLElement>(null);
+
+  // Lock body scroll when mobile sidebar is open
+  useEffect(() => {
+    if (sidebarOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [sidebarOpen]);
+
+  // Reset scroll and un-stuck iOS scrolling on route change
+  useEffect(() => {
+    if (mainRef.current) {
+      mainRef.current.scrollTo(0, 0);
+    }
+  }, [pathname]);
 
   if (loading) {
     return (
@@ -161,7 +182,11 @@ function DashboardContent({
           </div>
         </header>
 
-        <main className="flex-1 overflow-y-auto p-6 lg:p-8">
+        <main 
+          ref={mainRef}
+          className="flex-1 overflow-y-auto p-6 lg:p-8"
+          style={{ WebkitOverflowScrolling: "touch", transform: "translateZ(0)" }}
+        >
           {children}
         </main>
       </div>

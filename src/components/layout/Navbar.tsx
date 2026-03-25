@@ -22,6 +22,18 @@ export default function Navbar() {
     setMobileOpen(false);
   }, [pathname]);
 
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    if (mobileOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [mobileOpen]);
+
   useMotionValueEvent(scrollY, "change", (latest) => {
     if (typeof window !== "undefined") {
       if (window.innerWidth < 1200) {
