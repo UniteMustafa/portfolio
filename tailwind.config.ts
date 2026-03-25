@@ -13,6 +13,7 @@ const config: Config = {
         "accent-hover": "var(--color-accent-hover)",
         bg: "var(--color-bg)",
         "bg-secondary": "var(--color-bg-secondary)",
+        muted: "var(--color-text-muted)",
       },
       fontFamily: {
         mono: ["var(--font-jetbrains)", "JetBrains Mono", "monospace"],

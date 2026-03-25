@@ -58,7 +58,7 @@ export default function WorkPage() {
                 {activeProject.title}
               </h2>
 
-              <p className="text-[#9a9aaa] text-sm md:text-base leading-relaxed font-mono">
+              <p className="text-muted text-sm md:text-base leading-relaxed font-mono">
                 {activeProject.description}
               </p>
 
@@ -75,7 +75,23 @@ export default function WorkPage() {
                 })}
               </ul>
 
-              <div className="border border-white/20"></div>
+              {/* Dot indicators — Task 14 */}
+              <div className="flex items-center gap-2">
+                {data.projects.map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setProjectIndex(i)}
+                    aria-label={`Go to project ${i + 1}`}
+                    className={`rounded-full transition-all duration-300 ${
+                      i === projectIndex
+                        ? "w-8 h-2.5 bg-accent"
+                        : "w-2.5 h-2.5 bg-white/20 hover:bg-white/40"
+                    }`}
+                  />
+                ))}
+              </div>
+
+              <div className="border border-white/20" />
 
               <div className="flex items-center gap-4">
                 <Link 
@@ -88,13 +104,13 @@ export default function WorkPage() {
                 <div className="w-[1px] h-10 bg-white/20 mx-2 hidden sm:block"></div>
 
                 <Link href={activeProject.live || "#"}>
-                  <div className={`w-[60px] h-[60px] rounded-full flex justify-center items-center group transition-all duration-300 ${activeProject.live ? "bg-[#232329] hover:bg-accent" : "bg-white/5 cursor-not-allowed"}`}>
-                    <BsArrowUpRight className={`text-2xl transition-all duration-500 ${activeProject.live ? "text-white group-hover:text-[#1b1b22] group-hover:rotate-45" : "text-[#9a9aaa]/20"}`} />
+                  <div className={`w-[60px] h-[60px] rounded-full flex justify-center items-center group transition-all duration-300 ${activeProject.live ? "bg-bg-secondary hover:bg-accent" : "bg-white/5 cursor-not-allowed"}`}>
+                    <BsArrowUpRight className={`text-2xl transition-all duration-500 ${activeProject.live ? "text-white group-hover:text-bg group-hover:rotate-45" : "text-muted/20"}`} />
                   </div>
                 </Link>
                 <Link href={activeProject.github || "#"}>
-                  <div className={`w-[60px] h-[60px] rounded-full flex justify-center items-center group transition-all duration-300 ${activeProject.github ? "bg-[#232329] hover:bg-accent" : "bg-white/5 cursor-not-allowed"}`}>
-                    <BsGithub className={`text-2xl transition-colors ${activeProject.github ? "text-white group-hover:text-[#1b1b22]" : "text-[#9a9aaa]/20"}`} />
+                  <div className={`w-[60px] h-[60px] rounded-full flex justify-center items-center group transition-all duration-300 ${activeProject.github ? "bg-bg-secondary hover:bg-accent" : "bg-white/5 cursor-not-allowed"}`}>
+                    <BsGithub className={`text-2xl transition-colors ${activeProject.github ? "text-white group-hover:text-bg" : "text-muted/20"}`} />
                   </div>
                 </Link>
               </div>

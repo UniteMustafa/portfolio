@@ -76,6 +76,14 @@ export async function POST(req: NextRequest) {
         );
       }
 
+      // Message body size limit (Task 20)
+      if (message.trim().length > 2000) {
+        return NextResponse.json(
+          { error: "Message is too long. Please keep it under 2000 characters." },
+          { status: 400 }
+        );
+      }
+
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(email.trim())) {
         return NextResponse.json(

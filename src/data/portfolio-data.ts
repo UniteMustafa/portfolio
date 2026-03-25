@@ -130,6 +130,7 @@ export interface SiteSettings {
   siteDescription: string;
   accentColor: string;
   logoText: string;
+  tagline: string;
 }
 
 export interface PortfolioData {
@@ -352,5 +353,6 @@ export const defaultPortfolioData: PortfolioData = {
       "Portfolio of Mustafa Ali — Software Developer specializing in elegant digital experiences.",
     accentColor: "#00aaff",
     logoText: "Mustafa",
+    tagline: "Crafting elegant digital experiences with passion and precision.",
   },
 };

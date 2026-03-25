@@ -78,17 +78,7 @@ export default function Navbar() {
           })}
           <Link
             href="/contact"
-            className="px-5 py-2 rounded-full text-sm font-bold font-mono transition-all"
-            style={{
-              backgroundColor: "var(--color-accent)",
-              color: "#1b1b22",
-            }}
-            onMouseEnter={(e) =>
-              (e.currentTarget.style.backgroundColor = "var(--color-accent-hover)")
-            }
-            onMouseLeave={(e) =>
-              (e.currentTarget.style.backgroundColor = "var(--color-accent)")
-            }
+            className="px-5 py-2 rounded-full text-sm font-bold font-mono transition-all bg-accent hover:bg-accent-hover text-bg"
           >
             Hire me
           </Link>

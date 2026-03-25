@@ -80,6 +80,16 @@ export default function SettingsPage() {
             className="w-full bg-[#14141a] text-white p-3.5 rounded-lg outline-none focus:ring-1 focus:ring-accent font-mono text-sm border border-white/5"
           />
         </div>
+
+        <div>
+          <label className="block text-[#9a9aaa] font-mono text-xs mb-2">Footer Tagline</label>
+          <input
+            value={settings.tagline ?? ""}
+            onChange={(e) => setSettings((p) => ({ ...p, tagline: e.target.value }))}
+            placeholder="Crafting elegant digital experiences..."
+            className="w-full bg-[#14141a] text-white p-3.5 rounded-lg outline-none focus:ring-1 focus:ring-accent font-mono text-sm border border-white/5"
+          />
+        </div>
       </motion.div>
 
       {/* Accent color */}

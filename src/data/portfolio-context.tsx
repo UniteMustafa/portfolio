@@ -6,9 +6,12 @@ import { supabase } from "@/lib/supabase";
 
 const STORAGE_KEY = "portfolio-dashboard-data";
 
-/** Darken a hex color by a given percentage (0-100) */
+/** Darken a hex color by a given percentage (0-100). Gracefully returns the
+ * input unchanged if it isn't a valid 6-digit hex string. */
 function darkenColor(hex: string, percent: number): string {
-  const num = parseInt(hex.replace("#", ""), 16);
+  const cleaned = hex.replace("#", "");
+  if (!/^[0-9a-fA-F]{6}$/.test(cleaned)) return hex;
+  const num = parseInt(cleaned, 16);
   const r = Math.max(0, (num >> 16) - Math.round(2.55 * percent));
   const g = Math.max(0, ((num >> 8) & 0x00ff) - Math.round(2.55 * percent));
   const b = Math.max(0, (num & 0x0000ff) - Math.round(2.55 * percent));
@@ -59,8 +62,15 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
           // No data in Supabase yet, try localStorage
           const stored = localStorage.getItem(STORAGE_KEY);
           if (stored) {
-            const parsed = JSON.parse(stored) as Partial<PortfolioData>;
-            setData((prev) => ({ ...prev, ...parsed }));
+            try {
+              const parsed = JSON.parse(stored);
+              if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
+                setData((prev) => ({ ...prev, ...(parsed as Partial<PortfolioData>) }));
+              }
+            } catch {
+              // Corrupt localStorage — ignore and use defaults
+              localStorage.removeItem(STORAGE_KEY);
+            }
           }
         }
       } catch {
@@ -68,11 +78,13 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
         try {
           const stored = localStorage.getItem(STORAGE_KEY);
           if (stored) {
-            const parsed = JSON.parse(stored) as Partial<PortfolioData>;
-            setData((prev) => ({ ...prev, ...parsed }));
+            const parsed = JSON.parse(stored);
+            if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
+              setData((prev) => ({ ...prev, ...(parsed as Partial<PortfolioData>) }));
+            }
           }
         } catch {
-          // ignore
+          localStorage.removeItem(STORAGE_KEY);
         }
       }
       setLoading(false);
@@ -229,13 +241,15 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
     setData(defaultPortfolioData);
     localStorage.removeItem(STORAGE_KEY);
 
-    // Reset Supabase data too
-    for (const key of SECTION_KEYS) {
-      const defaultValue = defaultPortfolioData[key];
-      await supabase
-        .from("site_sections")
-        .upsert({ key, value: defaultValue as unknown as Record<string, unknown>, updated_at: new Date().toISOString() });
-    }
+    // Reset Supabase data — all keys in parallel
+    await Promise.all(
+      SECTION_KEYS.map((key) => {
+        const defaultValue = defaultPortfolioData[key];
+        return supabase
+          .from("site_sections")
+          .upsert({ key, value: defaultValue as unknown as Record<string, unknown>, updated_at: new Date().toISOString() });
+      })
+    );
   }, []);
 
   return (

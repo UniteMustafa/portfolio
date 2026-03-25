@@ -27,10 +27,9 @@ export default function Footer() {
               <span className="text-accent">.</span>
             </Link>
             <p
-              className="text-sm font-mono max-w-[260px] text-center md:text-left"
-              style={{ color: "var(--color-text-muted)" }}
+              className="text-sm font-mono max-w-[260px] text-center md:text-left text-muted"
             >
-              Crafting elegant digital experiences with passion and precision.
+              {data.settings.tagline}
             </p>
           </div>
 

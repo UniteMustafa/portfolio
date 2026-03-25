@@ -82,20 +82,7 @@ export default function Hero() {
             <a
               href="/assets/resume.pdf"
               download
-              className="flex items-center gap-2 px-6 py-3 rounded-full text-xs font-bold font-mono tracking-widest transition-all border"
-              style={{
-                borderColor: "var(--color-accent)",
-                color: "var(--color-accent)",
-                backgroundColor: "transparent",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = "var(--color-accent)";
-                e.currentTarget.style.color = "var(--color-bg)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = "transparent";
-                e.currentTarget.style.color = "var(--color-accent)";
-              }}
+              className="flex items-center gap-2 px-6 py-3 rounded-full text-xs font-bold font-mono tracking-widest transition-all border border-accent text-accent hover:bg-accent hover:text-bg"
             >
               DOWNLOAD CV <FiDownload className="text-sm" />
             </a>
@@ -111,20 +98,7 @@ export default function Hero() {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={label}
-                    className="w-10 h-10 flex items-center justify-center rounded-full border transition-all"
-                    style={{
-                      borderColor: "var(--color-accent)",
-                      color: "var(--color-accent)",
-                      backgroundColor: "transparent",
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = "var(--color-accent)";
-                      e.currentTarget.style.color = "var(--color-bg)";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = "transparent";
-                      e.currentTarget.style.color = "var(--color-accent)";
-                    }}
+                    className="w-10 h-10 flex items-center justify-center rounded-full border border-accent text-accent hover:bg-accent hover:text-bg transition-all"
                   >
                     <Icon size={16} />
                   </Link>

@@ -10,12 +10,13 @@ import StairTransition from "@/components/layout/StairTransition";
 import LoadingSkeleton from "@/components/LoadingSkeleton";
 import { usePortfolio } from "@/data/portfolio-context";
 
+/** Pages that intentionally don't show the footer (full-viewport layouts). */
+const PAGES_WITHOUT_FOOTER = ["/"];
+
 export default function PortfolioShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { loading } = usePortfolio();
   const isDashboard = pathname.startsWith("/dashboard");
-  // Pages that are designed to fit the viewport (no footer)
-  const isHomePage = pathname === "/";
 
   useEffect(() => {
     if (isDashboard) {
@@ -61,7 +62,7 @@ export default function PortfolioShell({ children }: { children: React.ReactNode
       <main className="relative z-10">
         <PageTransition>{children}</PageTransition>
       </main>
-      {!isHomePage && <Footer />}
+      {!PAGES_WITHOUT_FOOTER.includes(pathname) && <Footer />}
     </>
   );
 }

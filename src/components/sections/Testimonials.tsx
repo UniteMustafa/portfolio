@@ -58,11 +58,8 @@ export default function Testimonials() {
                     <FiStar
                       key={i}
                       size={14}
-                      className={
-                        i < t.rating
-                          ? "text-accent fill-accent"
-                          : "text-white/10"
-                      }
+                      className={i < t.rating ? "text-accent" : "text-white/10"}
+                      style={i < t.rating ? { fill: "var(--color-accent)" } : undefined}
                     />
                   ))}
                 </div>

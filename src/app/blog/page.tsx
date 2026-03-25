@@ -10,8 +10,19 @@ import {
   FiBookOpen,
   FiChevronLeft,
   FiChevronRight,
+  FiGrid,
+  FiList,
 } from "react-icons/fi";
 import { usePortfolio } from "@/data/portfolio-context";
+
+// Task 11: formatDate moved outside component (no dependencies, no closures)
+function formatDate(iso: string): string {
+  return new Date(iso).toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
+}
 
 const slideVariants = {
   enter: (direction: number) => ({
@@ -38,6 +49,8 @@ export default function BlogPage() {
     );
 
   const [[currentIndex, direction], setPage] = useState([0, 0]);
+  // Task 21: view toggle
+  const [viewMode, setViewMode] = useState<"carousel" | "grid">("carousel");
 
   const paginate = (newDirection: number) => {
     const nextIndex = currentIndex + newDirection;
@@ -51,15 +64,74 @@ export default function BlogPage() {
     setPage([index, dir]);
   };
 
-  const formatDate = (iso: string) => {
-    return new Date(iso).toLocaleDateString("en-US", {
-      month: "long",
-      day: "numeric",
-      year: "numeric",
-    });
-  };
-
   const post = posts[currentIndex];
+
+  const PostCard = ({ p }: { p: typeof posts[number] }) => (
+    <Link
+      href={`/blog/${p.slug}`}
+      className="group block bg-bg-secondary rounded-2xl overflow-hidden border border-white/5 hover:border-accent/20 transition-all duration-300 hover:shadow-[0_0_40px_var(--color-accent-glow)]"
+    >
+      {/* Cover image or gradient fallback */}
+      {p.coverImage ? (
+        <div className="h-[250px] md:h-[300px] overflow-hidden relative">
+          <Image
+            src={p.coverImage}
+            alt={p.title}
+            fill
+            className="object-cover group-hover:scale-105 transition-transform duration-500"
+          />
+        </div>
+      ) : (
+        <div
+          className="h-[250px] md:h-[300px] flex items-center justify-center"
+          style={{
+            background:
+              "linear-gradient(135deg, color-mix(in srgb, var(--color-accent) 10%, transparent) 0%, color-mix(in srgb, var(--color-accent) 2%, transparent) 100%)",
+          }}
+        >
+          <FiBookOpen
+            size={56}
+            className="text-accent/20 group-hover:text-accent/40 transition-colors duration-300"
+          />
+        </div>
+      )}
+
+      <div className="p-8 lg:p-10">
+        {/* Tags */}
+        <div className="flex flex-wrap gap-2 mb-4">
+          {p.tags.slice(0, 4).map((tag) => (
+            <span
+              key={tag}
+              className="text-accent/60 bg-accent/5 px-2.5 py-1 rounded-md font-mono text-[10px] uppercase tracking-wider border border-accent/10"
+            >
+              {tag}
+            </span>
+          ))}
+        </div>
+
+        {/* Title */}
+        <h2 className="text-2xl md:text-3xl font-bold font-mono text-white group-hover:text-accent transition-colors duration-300 mb-4">
+          {p.title}
+        </h2>
+
+        {/* Excerpt */}
+        <p className="font-mono text-sm leading-relaxed mb-6 line-clamp-3 text-muted">
+          {p.excerpt}
+        </p>
+
+        {/* Footer */}
+        <div className="flex items-center justify-between pt-5 border-t border-white/5">
+          <div className="flex items-center gap-2 font-mono text-xs text-muted">
+            <FiCalendar size={12} />
+            {formatDate(p.publishedAt)}
+          </div>
+          <span className="flex items-center gap-1 text-accent font-mono text-xs font-bold group-hover:gap-2 transition-all duration-300">
+            Read more <FiArrowRight size={12} />
+          </span>
+        </div>
+      </div>
+    </Link>
+  );
 
   return (
     <motion.section
@@ -72,31 +144,69 @@ export default function BlogPage() {
     >
       <div className="w-full max-w-[1200px] mx-auto px-6 md:px-10 mt-8 md:mt-16 pb-20">
         {/* Header */}
-        <div className="mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold font-mono text-white mb-3">
-            Blog
-          </h1>
-          <p
-            className="font-mono text-sm md:text-base max-w-[600px]"
-            style={{ color: "var(--color-text-muted)" }}
-          >
-            Thoughts, tutorials, and insights on web development, design, and
-            technology.
-          </p>
+        <div className="flex items-start justify-between mb-12">
+          <div>
+            <h1 className="text-4xl md:text-5xl font-bold font-mono text-white mb-3">
+              Blog
+            </h1>
+            <p className="font-mono text-sm md:text-base max-w-[600px] text-muted">
+              Thoughts, tutorials, and insights on web development, design, and
+              technology.
+            </p>
+          </div>
+
+          {/* Task 21: View toggle */}
+          {posts.length > 1 && (
+            <div className="flex items-center gap-1 bg-bg-secondary rounded-lg p-1 border border-white/5 shrink-0 mt-1">
+              <button
+                onClick={() => setViewMode("carousel")}
+                title="Carousel view"
+                className={`p-2 rounded-md transition-all duration-200 ${
+                  viewMode === "carousel"
+                    ? "bg-accent/15 text-accent"
+                    : "text-muted hover:text-white"
+                }`}
+              >
+                <FiList size={16} />
+              </button>
+              <button
+                onClick={() => setViewMode("grid")}
+                title="Grid view"
+                className={`p-2 rounded-md transition-all duration-200 ${
+                  viewMode === "grid"
+                    ? "bg-accent/15 text-accent"
+                    : "text-muted hover:text-white"
+                }`}
+              >
+                <FiGrid size={16} />
+              </button>
+            </div>
+          )}
         </div>
 
         {posts.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 text-center">
-            <div className="w-16 h-16 rounded-full bg-[#232329] flex items-center justify-center mb-4">
-              <FiBookOpen size={28} className="text-[#9a9aaa]/40" />
+            <div className="w-16 h-16 rounded-full bg-bg-secondary flex items-center justify-center mb-4">
+              <FiBookOpen size={28} className="text-muted/40" />
             </div>
-            <p className="text-[#9a9aaa] font-mono text-sm">
+            <p className="text-muted font-mono text-sm">
               No posts yet — check back soon!
             </p>
           </div>
+        ) : viewMode === "grid" ? (
+          /* Task 21: Grid view */
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="grid grid-cols-1 md:grid-cols-2 gap-8"
+          >
+            {posts.map((p) => (
+              <PostCard key={p.id} p={p} />
+            ))}
+          </motion.div>
         ) : (
+          /* Carousel view */
           <div className="flex flex-col items-center">
-            {/* Carousel container */}
             <div className="relative w-full max-w-[750px]">
               {/* Left arrow */}
               <button
@@ -104,8 +214,8 @@ export default function BlogPage() {
                 disabled={currentIndex === 0}
                 className={`absolute left-0 md:-left-16 top-1/2 -translate-y-1/2 z-10 w-11 h-11 rounded-full flex items-center justify-center transition-all duration-300 font-mono ${
                   currentIndex === 0
-                    ? "bg-white/5 text-[#9a9aaa]/20 cursor-not-allowed"
-                    : "bg-[#232329] text-white hover:bg-accent/20 hover:text-accent border border-white/5 hover:border-accent/30"
+                    ? "bg-white/5 text-muted/20 cursor-not-allowed"
+                    : "bg-bg-secondary text-white hover:bg-accent/20 hover:text-accent border border-white/5 hover:border-accent/30"
                 }`}
               >
                 <FiChevronLeft size={20} />
@@ -117,8 +227,8 @@ export default function BlogPage() {
                 disabled={currentIndex === posts.length - 1}
                 className={`absolute right-0 md:-right-16 top-1/2 -translate-y-1/2 z-10 w-11 h-11 rounded-full flex items-center justify-center transition-all duration-300 font-mono ${
                   currentIndex === posts.length - 1
-                    ? "bg-white/5 text-[#9a9aaa]/20 cursor-not-allowed"
-                    : "bg-[#232329] text-white hover:bg-accent/20 hover:text-accent border border-white/5 hover:border-accent/30"
+                    ? "bg-white/5 text-muted/20 cursor-not-allowed"
+                    : "bg-bg-secondary text-white hover:bg-accent/20 hover:text-accent border border-white/5 hover:border-accent/30"
                 }`}
               >
                 <FiChevronRight size={20} />
@@ -139,76 +249,7 @@ export default function BlogPage() {
                       opacity: { duration: 0.2 },
                     }}
                   >
-                    <Link
-                      href={`/blog/${post.slug}`}
-                      className="group block bg-[#232329] rounded-2xl overflow-hidden border border-white/5 hover:border-accent/20 transition-all duration-300 hover:shadow-[0_0_40px_var(--color-accent-glow)]"
-                    >
-                      {/* Cover image or gradient fallback */}
-                      {post.coverImage ? (
-                        <div className="h-[250px] md:h-[300px] overflow-hidden relative">
-                          <Image
-                            src={post.coverImage}
-                            alt={post.title}
-                            fill
-                            className="object-cover group-hover:scale-105 transition-transform duration-500"
-                          />
-                        </div>
-                      ) : (
-                        <div
-                          className="h-[250px] md:h-[300px] flex items-center justify-center"
-                          style={{
-                            background:
-                              "linear-gradient(135deg, color-mix(in srgb, var(--color-accent) 10%, transparent) 0%, color-mix(in srgb, var(--color-accent) 2%, transparent) 100%)",
-                          }}
-                        >
-                          <FiBookOpen
-                            size={56}
-                            className="text-accent/20 group-hover:text-accent/40 transition-colors duration-300"
-                          />
-                        </div>
-                      )}
-
-                      <div className="p-8 lg:p-10">
-                        {/* Tags */}
-                        <div className="flex flex-wrap gap-2 mb-4">
-                          {post.tags.slice(0, 4).map((tag) => (
-                            <span
-                              key={tag}
-                              className="text-accent/60 bg-accent/5 px-2.5 py-1 rounded-md font-mono text-[10px] uppercase tracking-wider border border-accent/10"
-                            >
-                              {tag}
-                            </span>
-                          ))}
-                        </div>
-
-                        {/* Title */}
-                        <h2 className="text-2xl md:text-3xl font-bold font-mono text-white group-hover:text-accent transition-colors duration-300 mb-4">
-                          {post.title}
-                        </h2>
-
-                        {/* Excerpt */}
-                        <p
-                          className="font-mono text-sm leading-relaxed mb-6 line-clamp-3"
-                          style={{ color: "var(--color-text-muted)" }}
-                        >
-                          {post.excerpt}
-                        </p>
-
-                        {/* Footer */}
-                        <div className="flex items-center justify-between pt-5 border-t border-white/5">
-                          <div
-                            className="flex items-center gap-2 font-mono text-xs"
-                            style={{ color: "var(--color-text-muted)" }}
-                          >
-                            <FiCalendar size={12} />
-                            {formatDate(post.publishedAt)}
-                          </div>
-                          <span className="flex items-center gap-1 text-accent font-mono text-xs font-bold group-hover:gap-2 transition-all duration-300">
-                            Read more <FiArrowRight size={12} />
-                          </span>
-                        </div>
-                      </div>
-                    </Link>
+                    <PostCard p={post} />
                   </motion.div>
                 </AnimatePresence>
               </div>
@@ -229,10 +270,7 @@ export default function BlogPage() {
                   />
                 ))}
               </div>
-              <span
-                className="font-mono text-xs"
-                style={{ color: "var(--color-text-muted)" }}
-              >
+              <span className="font-mono text-xs text-muted">
                 {currentIndex + 1} / {posts.length}
               </span>
             </div>

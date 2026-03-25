@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { FiPlus, FiTrash2, FiSave, FiEye, FiEyeOff } from "react-icons/fi";
 import { usePortfolio } from "@/data/portfolio-context";
 import Toast from "@/components/dashboard/Toast";
+import ImageUploader from "@/components/dashboard/ImageUploader";
 import type { BlogPost } from "@/data/portfolio-data";
 
 export default function BlogDashboardPage() {
@@ -69,7 +70,7 @@ export default function BlogDashboardPage() {
       <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold font-mono text-white">Blog Posts</h1>
-          <p className="text-[#9a9aaa] font-mono text-sm mt-1">
+          <p className="text-muted font-mono text-sm mt-1">
             Write and manage your blog articles.
           </p>
         </div>
@@ -89,6 +90,7 @@ export default function BlogDashboardPage() {
           transition={{ delay: i * 0.05 }}
           className="bg-[#1e1e26] rounded-xl p-6 border border-white/5 space-y-4"
         >
+          {/* Post header */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <span className="text-accent font-mono text-xs font-bold">
@@ -98,7 +100,7 @@ export default function BlogDashboardPage() {
                 className={`px-2 py-0.5 rounded text-[10px] font-mono ${
                   post.published
                     ? "bg-green-500/10 text-green-400"
-                    : "bg-white/5 text-[#9a9aaa]/50"
+                    : "bg-white/5 text-muted/50"
                 }`}
               >
                 {post.published ? "Published" : "Draft"}
@@ -107,7 +109,7 @@ export default function BlogDashboardPage() {
             <div className="flex items-center gap-2">
               <button
                 onClick={() => togglePublished(i)}
-                className="text-[#9a9aaa]/40 hover:text-accent transition-colors p-1"
+                className="text-muted/40 hover:text-accent transition-colors p-1"
                 title={post.published ? "Unpublish" : "Publish"}
               >
                 {post.published ? <FiEye size={16} /> : <FiEyeOff size={16} />}
@@ -121,18 +123,30 @@ export default function BlogDashboardPage() {
             </div>
           </div>
 
+          {/* Title (full width) */}
+          <div>
+            <label className="block text-muted font-mono text-xs mb-1">Title</label>
+            <input
+              value={post.title}
+              onChange={(e) => updatePost(i, "title", e.target.value)}
+              className="w-full bg-[#14141a] text-white p-3 rounded-lg outline-none focus:ring-1 focus:ring-accent font-mono text-sm border border-white/5"
+              placeholder="My Blog Post Title"
+            />
+          </div>
+
+          {/* Cover Image uploader — file picker + drag & drop */}
+          <div>
+            <label className="block text-muted font-mono text-xs mb-2">Cover Image</label>
+            <ImageUploader
+              value={post.coverImage}
+              onChange={(url) => updatePost(i, "coverImage", url)}
+            />
+          </div>
+
+          {/* Slug + Tags */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="md:col-span-2">
-              <label className="block text-[#9a9aaa] font-mono text-xs mb-1">Title</label>
-              <input
-                value={post.title}
-                onChange={(e) => updatePost(i, "title", e.target.value)}
-                className="w-full bg-[#14141a] text-white p-3 rounded-lg outline-none focus:ring-1 focus:ring-accent font-mono text-sm border border-white/5"
-                placeholder="My Blog Post Title"
-              />
-            </div>
             <div>
-              <label className="block text-[#9a9aaa] font-mono text-xs mb-1">Slug</label>
+              <label className="block text-muted font-mono text-xs mb-1">Slug</label>
               <input
                 value={post.slug}
                 onChange={(e) => updatePost(i, "slug", e.target.value)}
@@ -141,7 +155,7 @@ export default function BlogDashboardPage() {
               />
             </div>
             <div>
-              <label className="block text-[#9a9aaa] font-mono text-xs mb-1">
+              <label className="block text-muted font-mono text-xs mb-1">
                 Tags (comma-separated)
               </label>
               <input
@@ -159,8 +173,9 @@ export default function BlogDashboardPage() {
             </div>
           </div>
 
+          {/* Excerpt */}
           <div>
-            <label className="block text-[#9a9aaa] font-mono text-xs mb-1">Excerpt</label>
+            <label className="block text-muted font-mono text-xs mb-1">Excerpt</label>
             <textarea
               rows={2}
               value={post.excerpt}
@@ -170,8 +185,9 @@ export default function BlogDashboardPage() {
             />
           </div>
 
+          {/* Content */}
           <div>
-            <label className="block text-[#9a9aaa] font-mono text-xs mb-1">
+            <label className="block text-muted font-mono text-xs mb-1">
               Content (Markdown)
             </label>
             <textarea
@@ -179,7 +195,7 @@ export default function BlogDashboardPage() {
               value={post.content}
               onChange={(e) => updatePost(i, "content", e.target.value)}
               className="w-full bg-[#14141a] text-white p-3 rounded-lg outline-none focus:ring-1 focus:ring-accent font-mono text-xs border border-white/5 resize-y leading-relaxed"
-              placeholder="# My Post\n\nWrite your content in Markdown..."
+              placeholder={"# My Post\n\nWrite your content in Markdown..."}
             />
           </div>
         </motion.div>
@@ -189,7 +205,7 @@ export default function BlogDashboardPage() {
         onClick={save}
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
-        className="flex items-center gap-2 px-6 py-3 bg-accent hover:bg-accent-hover text-[#1b1b22] font-bold font-mono text-sm rounded-xl transition-colors"
+        className="flex items-center gap-2 px-6 py-3 bg-accent hover:bg-accent-hover text-bg font-bold font-mono text-sm rounded-xl transition-colors"
       >
         <FiSave size={16} /> Save
       </motion.button>
