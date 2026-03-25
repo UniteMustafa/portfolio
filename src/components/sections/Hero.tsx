@@ -4,16 +4,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { FiDownload } from "react-icons/fi";
-import { FaGithub, FaLinkedinIn, FaYoutube, FaTwitter } from "react-icons/fa";
+import { FaGithub } from "react-icons/fa";
 import { usePortfolio } from "@/data/portfolio-context";
-import type { IconType } from "react-icons";
-
-const iconMap: Record<string, IconType> = {
-  github: FaGithub,
-  linkedin: FaLinkedinIn,
-  youtube: FaYoutube,
-  twitter: FaTwitter,
-};
+import { socialIconMap } from "@/lib/constants";
 
 export default function Hero() {
   const { data } = usePortfolio();
@@ -110,7 +103,7 @@ export default function Hero() {
             {/* Social icons */}
             <div className="flex items-center gap-3">
               {socialLinks.map(({ iconKey, href, label }) => {
-                const Icon = iconMap[iconKey] || FaGithub;
+                const Icon = socialIconMap[iconKey] || FaGithub;
                 return (
                   <Link
                     key={label}

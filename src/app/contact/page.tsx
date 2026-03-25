@@ -33,6 +33,7 @@ export default function ContactPage() {
   const [message, setMessage] = useState("");
   const [submitError, setSubmitError] = useState("");
   const [sent, setSent] = useState(false);
+  const [sending, setSending] = useState(false);
 
   const countryRef = useRef<HTMLDivElement>(null);
 
@@ -87,6 +88,7 @@ export default function ContactPage() {
 
     setSubmitError("");
     setSent(false);
+    setSending(true);
 
     try {
       await addMessage({
@@ -115,6 +117,8 @@ export default function ContactPage() {
       setTimeout(() => setSent(false), 5000);
     } catch (err: any) {
       setSubmitError(err.message || "Failed to send message. Please try again.");
+    } finally {
+      setSending(false);
     }
   };
 
@@ -332,17 +336,24 @@ export default function ContactPage() {
             <div className="flex flex-col gap-3 mt-2">
               <button
                 onClick={handleSubmit}
-                disabled={sent || !!emailError}
+                disabled={sent || sending || !!emailError}
                 className={`w-max px-8 py-3.5 font-bold rounded-full transition-all font-mono flex items-center gap-2 ${sent
                   ? "bg-green-500 text-white cursor-default"
-                  : emailError
-                    ? "bg-accent/40 text-[#1b1b22]/60 cursor-not-allowed"
-                    : "text-[#1b1b22] bg-accent hover:bg-accent-hover"
+                  : sending
+                    ? "bg-accent/60 text-[#1b1b22]/80 cursor-wait"
+                    : emailError
+                      ? "bg-accent/40 text-[#1b1b22]/60 cursor-not-allowed"
+                      : "text-[#1b1b22] bg-accent hover:bg-accent-hover"
                   }`}
               >
                 {sent ? (
                   <>
                     <FiCheck size={16} /> Message Sent!
+                  </>
+                ) : sending ? (
+                  <>
+                    <span className="w-4 h-4 border-2 border-[#1b1b22]/30 border-t-[#1b1b22] rounded-full animate-spin" />
+                    Sending...
                   </>
                 ) : (
                   "Send message"

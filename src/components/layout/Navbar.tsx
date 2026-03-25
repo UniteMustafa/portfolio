@@ -6,15 +6,7 @@ import { usePathname } from "next/navigation";
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
 import { FiMenu, FiX } from "react-icons/fi";
 import { usePortfolio } from "@/data/portfolio-context";
-
-const navLinks = [
-  { name: "Home", href: "/" },
-  { name: "Services", href: "/services" },
-  { name: "Resume", href: "/resume" },
-  { name: "Work", href: "/work" },
-  { name: "Blog", href: "/blog" },
-  { name: "Contact", href: "/contact" },
-];
+import { navLinks } from "@/lib/constants";
 
 export default function Navbar() {
   const pathname = usePathname();

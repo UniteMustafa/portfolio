@@ -31,7 +31,7 @@ export default function DashboardPage() {
   const unreadCount = data.messages.filter((m) => !m.read).length;
 
   const quickStats = [
-    { label: "Projects", value: data.projects.length, icon: FiBriefcase, color: "#00aaff" },
+    { label: "Projects", value: data.projects.length, icon: FiBriefcase, color: "var(--color-accent)" },
     { label: "Services", value: data.services.length, icon: FiLayers, color: "#a855f7" },
     { label: "Messages", value: data.messages.length, icon: FiMessageSquare, color: "#ec4899" },
     { label: "Skills", value: data.resume.skillsList.length, icon: FiBarChart2, color: "#f59e0b" },
