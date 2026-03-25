@@ -6,6 +6,15 @@ import { supabase } from "@/lib/supabase";
 
 const STORAGE_KEY = "portfolio-dashboard-data";
 
+/** Darken a hex color by a given percentage (0-100) */
+function darkenColor(hex: string, percent: number): string {
+  const num = parseInt(hex.replace("#", ""), 16);
+  const r = Math.max(0, (num >> 16) - Math.round(2.55 * percent));
+  const g = Math.max(0, ((num >> 8) & 0x00ff) - Math.round(2.55 * percent));
+  const b = Math.max(0, (num & 0x0000ff) - Math.round(2.55 * percent));
+  return `#${((r << 16) | (g << 8) | b).toString(16).padStart(6, "0")}`;
+}
+
 interface PortfolioContextValue {
   data: PortfolioData;
   updateSection: <K extends keyof PortfolioData>(key: K, value: PortfolioData[K]) => void;
@@ -107,6 +116,17 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
     loadData();
     loadMessages();
   }, []);
+
+  // Apply accent color to CSS custom properties whenever data.settings changes
+  useEffect(() => {
+    const accent = data.settings?.accentColor;
+    if (accent && typeof document !== "undefined") {
+      document.documentElement.style.setProperty("--color-accent", accent);
+      // Derive a darker hover color by reducing brightness
+      const hoverColor = darkenColor(accent, 20);
+      document.documentElement.style.setProperty("--color-accent-hover", hoverColor);
+    }
+  }, [data.settings?.accentColor]);
 
   const updateSection = useCallback(
     <K extends keyof PortfolioData>(key: K, value: PortfolioData[K]) => {
