@@ -66,11 +66,19 @@ export default function BlogDashboardPage() {
 
   return (
     <div className="max-w-[800px] mx-auto space-y-6">
-      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
-        <h1 className="text-2xl font-bold font-mono text-white">Blog Posts</h1>
-        <p className="text-[#9a9aaa] font-mono text-sm mt-1">
-          Write and manage your blog articles.
-        </p>
+      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold font-mono text-white">Blog Posts</h1>
+          <p className="text-[#9a9aaa] font-mono text-sm mt-1">
+            Write and manage your blog articles.
+          </p>
+        </div>
+        <button
+          onClick={addPost}
+          className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-accent/10 text-accent font-mono text-sm hover:bg-accent/20 transition-colors"
+        >
+          <FiPlus size={16} /> Add Post
+        </button>
       </motion.div>
 
       {posts.map((post, i) => (
@@ -177,20 +185,14 @@ export default function BlogDashboardPage() {
         </motion.div>
       ))}
 
-      <div className="flex items-center gap-3">
-        <button
-          onClick={addPost}
-          className="flex items-center gap-2 px-5 py-3 bg-[#1e1e26] hover:bg-[#252530] text-white font-mono text-sm rounded-xl transition-colors border border-white/5"
-        >
-          <FiPlus size={16} /> Add Post
-        </button>
-        <button
-          onClick={save}
-          className="flex items-center gap-2 px-6 py-3 bg-accent hover:bg-accent-hover text-[#1b1b22] font-bold font-mono text-sm rounded-xl transition-colors"
-        >
-          <FiSave size={16} /> Save
-        </button>
-      </div>
+      <motion.button
+        onClick={save}
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
+        className="flex items-center gap-2 px-6 py-3 bg-accent hover:bg-accent-hover text-[#1b1b22] font-bold font-mono text-sm rounded-xl transition-colors"
+      >
+        <FiSave size={16} /> Save
+      </motion.button>
 
       <Toast message={toastMsg} visible={toast} onClose={closeToast} />
     </div>
