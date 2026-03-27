@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { FiMenu, FiX } from "react-icons/fi";
 import { supabase } from "@/lib/supabase";
 import { usePortfolio } from "@/data/portfolio-context";
@@ -14,6 +14,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [authChecked, setAuthChecked] = useState(false);
   const [isAuthed, setIsAuthed] = useState(false);
+
+  // Force-close mobile sidebar on every route change to prevent ghost overlays
+  useEffect(() => {
+    setSidebarOpen(false);
+  }, [pathname]);
 
   // Skip auth check for the login page itself
   const isLoginPage = pathname === "/dashboard/login";
@@ -76,24 +81,15 @@ function DashboardContent({
 }) {
   const { loading, data } = usePortfolio();
   const pathname = usePathname();
-  const mainRef = useRef<HTMLElement>(null);
+  const mainRef = useRef<HTMLDivElement>(null);
 
-  // Lock body scroll when mobile sidebar is open
+  // Reset scroll position on route change
   useEffect(() => {
-    if (sidebarOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [sidebarOpen]);
-
-  // Reset scroll and un-stuck iOS scrolling on route change
-  useEffect(() => {
-    if (mainRef.current) {
-      mainRef.current.scrollTo(0, 0);
+    const mainEl = mainRef.current;
+    if (mainEl) {
+      requestAnimationFrame(() => {
+        mainEl.scrollTo(0, 0);
+      });
     }
   }, [pathname]);
 
@@ -107,7 +103,7 @@ function DashboardContent({
   }
 
   return (
-    <div className="flex h-screen overflow-hidden bg-bg">
+    <div className="flex h-[100dvh] overflow-hidden bg-bg">
       {/* Sidebar — Desktop */}
       <aside className="hidden lg:flex flex-col w-[260px] border-r border-white/5 bg-[#16161c] shrink-0">
         <div className="flex items-center gap-3 px-6 h-16 border-b border-white/5">
@@ -121,46 +117,41 @@ function DashboardContent({
       </aside>
 
       {/* Mobile sidebar overlay */}
-      <AnimatePresence>
-        {sidebarOpen && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
-              onClick={() => setSidebarOpen(false)}
-            />
-            <motion.aside
-              initial={{ x: "-100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "-100%" }}
-              transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="fixed left-0 top-0 bottom-0 w-[280px] bg-[#16161c] z-50 flex flex-col lg:hidden border-r border-white/5"
-            >
-              <div className="flex items-center justify-between px-6 h-16 border-b border-white/5">
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-accent/20 flex items-center justify-center">
-                    <span className="text-accent font-bold font-mono text-sm">M</span>
-                  </div>
-                  <span className="text-white font-mono font-bold text-sm">Dashboard</span>
-                </div>
-                <button
-                  onClick={() => setSidebarOpen(false)}
-                  className="text-muted hover:text-white transition-colors"
-                >
-                  <FiX size={22} />
-                </button>
-              </div>
+      {/* Mobile sidebar overlay (Simplified without AnimatePresence to prevent ghost overlays on route change) */}
+      {sidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+      
+      <motion.aside
+        initial={false}
+        animate={{ x: sidebarOpen ? 0 : "-100%" }}
+        transition={{ type: "spring", damping: 25, stiffness: 200 }}
+        className="fixed left-0 top-0 bottom-0 w-[280px] bg-[#16161c] z-50 flex flex-col lg:hidden border-r border-white/5"
+        style={{ pointerEvents: sidebarOpen ? "auto" : "none" }}
+      >
+        <div className="flex items-center justify-between px-6 h-16 border-b border-white/5">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-accent/20 flex items-center justify-center">
+              <span className="text-accent font-bold font-mono text-sm">M</span>
+            </div>
+            <span className="text-white font-mono font-bold text-sm">Dashboard</span>
+          </div>
+          <button
+            onClick={() => setSidebarOpen(false)}
+            className="text-muted hover:text-white transition-colors"
+          >
+            <FiX size={22} />
+          </button>
+        </div>
 
-              <SidebarNav onLinkClick={() => setSidebarOpen(false)} />
-            </motion.aside>
-          </>
-        )}
-      </AnimatePresence>
+        <SidebarNav onLinkClick={() => setSidebarOpen(false)} />
+      </motion.aside>
 
       {/* Main content area */}
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 flex flex-col overflow-hidden min-h-0">
         <header className="flex items-center justify-between h-16 px-6 border-b border-white/5 bg-[#16161c]/50 backdrop-blur-md shrink-0">
           <button
             onClick={() => setSidebarOpen(true)}
@@ -182,11 +173,7 @@ function DashboardContent({
           </div>
         </header>
 
-        <main 
-          ref={mainRef}
-          className="flex-1 overflow-y-auto p-6 lg:p-8"
-          style={{ WebkitOverflowScrolling: "touch", transform: "translateZ(0)" }}
-        >
+        <main ref={mainRef} className="flex-1 overflow-y-auto p-6 lg:p-8 min-h-0 overscroll-y-contain" style={{ WebkitOverflowScrolling: 'touch' }}>
           {children}
         </main>
       </div>

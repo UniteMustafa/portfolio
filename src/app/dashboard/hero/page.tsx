@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { FiSave, FiPlus, FiTrash2 } from "react-icons/fi";
 import { usePortfolio } from "@/data/portfolio-context";
 import Toast from "@/components/dashboard/Toast";
+import ImageUploader from "@/components/dashboard/ImageUploader";
 import type { SocialLink } from "@/data/portfolio-data";
 
 export default function HeroPage() {
@@ -89,13 +90,12 @@ export default function HeroPage() {
           />
         </div>
 
-        {/* Photo URL */}
+        {/* Photo Upload */}
         <div>
-          <label className="block text-[#9a9aaa] font-mono text-xs mb-2">Photo URL</label>
-          <input
-            value={hero.photoUrl}
-            onChange={(e) => updateField("photoUrl", e.target.value)}
-            className="w-full bg-[#14141a] text-white p-3.5 rounded-lg outline-none focus:ring-1 focus:ring-accent transition-all font-mono text-sm border border-white/5"
+          <label className="block text-[#9a9aaa] font-mono text-xs mb-2">Profile Photo</label>
+          <ImageUploader 
+            value={hero.photoUrl} 
+            onChange={(url) => updateField("photoUrl", url)} 
           />
         </div>
       </motion.div>

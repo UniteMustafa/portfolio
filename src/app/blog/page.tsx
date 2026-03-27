@@ -140,9 +140,9 @@ export default function BlogPage() {
         opacity: 1,
         transition: { delay: 0.4, duration: 0.4, ease: "easeIn" },
       }}
-      className="min-h-screen py-12 xl:py-0 w-full pt-[80px] md:pt-[100px]"
+      className="min-h-screen py-12 xl:py-0 w-full pt-[110px] md:pt-[130px]"
     >
-      <div className="w-full max-w-[1200px] mx-auto px-6 md:px-10 mt-8 md:mt-16 pb-20">
+      <div className="w-full max-w-[1200px] mx-auto px-6 md:px-10 mt-12 md:mt-20 pb-20">
         {/* Header */}
         <div className="flex items-start justify-between mb-12">
           <div>

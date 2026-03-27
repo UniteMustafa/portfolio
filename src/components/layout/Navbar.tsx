@@ -29,6 +29,7 @@ export default function Navbar() {
     } else {
       document.body.style.overflow = "";
     }
+    
     return () => {
       document.body.style.overflow = "";
     };
@@ -52,9 +53,8 @@ export default function Navbar() {
   return (
     <>
       <nav
-        className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-5 transition-transform duration-300 ${
-          isVisible ? "translate-y-0" : "-translate-y-full"
-        }`}
+        className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-5 transition-transform duration-300 ${isVisible ? "translate-y-0" : "-translate-y-full"
+          }`}
         style={{ backgroundColor: "rgba(27, 27, 34, 0.95)", backdropFilter: "blur(8px)" }}
       >
         {/* Logo */}
@@ -115,7 +115,7 @@ export default function Navbar() {
             exit={{ opacity: 0, y: "-100%" }}
             transition={{ type: "spring", damping: 25, stiffness: 200 }}
             className="fixed inset-0 z-[60] flex flex-col items-center justify-center p-6"
-            style={{ 
+            style={{
               backgroundColor: "rgba(23, 23, 33, 0.98)",
               backdropFilter: "blur(20px)",
             }}
@@ -144,11 +144,10 @@ export default function Navbar() {
                   >
                     <Link
                       href={link.href}
-                      className={`text-4xl sm:text-5xl font-bold font-mono transition-all duration-300 inline-block ${
-                        isActive 
-                          ? "text-accent scale-110" 
+                      className={`text-4xl sm:text-5xl font-bold font-mono transition-all duration-300 inline-block ${isActive
+                          ? "text-accent scale-110"
                           : "text-white/60 hover:text-white hover:scale-105"
-                      }`}
+                        }`}
                     >
                       {link.name}
                     </Link>
@@ -158,7 +157,7 @@ export default function Navbar() {
             </div>
 
             {/* Mobile Footer CTA */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
