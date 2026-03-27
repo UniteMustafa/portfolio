@@ -27,6 +27,16 @@ body {
 
 /* Desktop: allow scrolling for testimonials and other below-fold content */
 
+/* Mobile global scroll lock utility for the full-screen menu */
+body.menu-open {
+  overflow: hidden;
+  touch-action: none;
+}
+html:has(body.menu-open) {
+  overflow: hidden;
+  touch-action: none;
+}
+
 /* Dashboard needs scrolling, also remove portfolio body glow */
 body.dashboard-page::before {
   display: none;
