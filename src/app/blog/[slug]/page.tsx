@@ -7,6 +7,7 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { FiArrowLeft, FiCalendar, FiClock } from "react-icons/fi";
 import { usePortfolio } from "@/data/portfolio-context";
+import LikeButton from "@/components/blog/LikeButton";
 
 /** Very simple markdown-to-HTML renderer for blog content */
 function renderMarkdown(md: string): string {
@@ -123,6 +124,9 @@ export default function BlogPostPage() {
             <FiClock size={12} />
             {readTime} min read
           </span>
+          <div className="ml-auto">
+            <LikeButton slug={post.slug} />
+          </div>
         </motion.div>
 
         {/* Content */}

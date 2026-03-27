@@ -5,7 +5,9 @@ import { motion, Reorder, useDragControls } from "framer-motion";
 import { FiSave, FiPlus, FiTrash2, FiMenu } from "react-icons/fi";
 import { usePortfolio } from "@/data/portfolio-context";
 import Toast from "@/components/dashboard/Toast";
+import TextFormatHint from "@/components/dashboard/TextFormatHint";
 import type { ServiceItem } from "@/data/portfolio-data";
+import { initDragScroll } from "@/utils/dragScroll";
 
 function ServiceItemCard({
   service,
@@ -25,6 +27,8 @@ function ServiceItemCard({
       value={service} 
       dragListener={false} 
       dragControls={controls}
+      whileDrag={{ scale: 0.98, opacity: 0.8, zIndex: 50 }}
+      className="relative"
     >
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -35,11 +39,16 @@ function ServiceItemCard({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div
-              onPointerDown={(e) => controls.start(e)}
-              className="cursor-grab active:cursor-grabbing p-2 -ml-2 rounded-md hover:bg-white/5 transition-colors"
+              onPointerDown={(e) => {
+                e.preventDefault();
+                controls.start(e);
+                initDragScroll(e);
+              }}
+              className="cursor-grab active:cursor-grabbing p-3 -ml-3 shrink-0 rounded-md hover:bg-white/5 transition-colors touch-none select-none flex items-center justify-center"
               title="Drag to reorder"
+              style={{ touchAction: "none" }}
             >
-              <FiMenu className="text-[#9a9aaa]/60" />
+              <FiMenu className="text-[#9a9aaa]/60" size={18} />
             </div>
             <span className="text-accent font-mono font-bold text-lg">{service.num}</span>
           </div>
@@ -78,7 +87,7 @@ function ServiceItemCard({
             onChange={(e) => updateItem(index, "description", e.target.value)}
             className="w-full bg-[#14141a] text-white p-3 rounded-lg outline-none focus:ring-1 focus:ring-accent transition-all font-mono text-sm border border-white/5 resize-none"
           />
-          <p className="text-[#9a9aaa]/50 text-[10px] font-mono mt-1">Format text: **bold**, *italic*, [link text](url), & \n for new line.</p>
+          <TextFormatHint />
         </div>
       </motion.div>
     </Reorder.Item>

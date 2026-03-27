@@ -14,6 +14,7 @@ import {
   FiList,
 } from "react-icons/fi";
 import { usePortfolio } from "@/data/portfolio-context";
+import LikeButton from "@/components/blog/LikeButton";
 
 // Task 11: formatDate moved outside component (no dependencies, no closures)
 function formatDate(iso: string): string {
@@ -120,10 +121,15 @@ export default function BlogPage() {
         </p>
 
         {/* Footer */}
-        <div className="flex items-center justify-between pt-5 border-t border-white/5">
-          <div className="flex items-center gap-2 font-mono text-xs text-muted">
-            <FiCalendar size={12} />
-            {formatDate(p.publishedAt)}
+        <div className="flex items-center justify-between pt-5 border-t border-white/5 relative z-10">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 font-mono text-xs text-muted">
+              <FiCalendar size={12} />
+              {formatDate(p.publishedAt)}
+            </div>
+            <div onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}>
+              <LikeButton slug={p.slug} />
+            </div>
           </div>
           <span className="flex items-center gap-1 text-accent font-mono text-xs font-bold group-hover:gap-2 transition-all duration-300">
             Read more <FiArrowRight size={12} />

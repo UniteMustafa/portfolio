@@ -1,12 +1,164 @@
 "use client";
 
 import { useState, useCallback, useRef, useEffect } from "react";
-import { motion } from "framer-motion";
-import { FiPlus, FiTrash2, FiSave, FiEye, FiEyeOff } from "react-icons/fi";
+import { motion, Reorder, useDragControls } from "framer-motion";
+import { FiPlus, FiTrash2, FiSave, FiEye, FiEyeOff, FiMenu } from "react-icons/fi";
 import { usePortfolio } from "@/data/portfolio-context";
 import Toast from "@/components/dashboard/Toast";
 import ImageUploader from "@/components/dashboard/ImageUploader";
 import type { BlogPost } from "@/data/portfolio-data";
+import { initDragScroll } from "@/utils/dragScroll";
+import TextFormatHint from "@/components/dashboard/TextFormatHint";
+
+function BlogItemCard({
+  post,
+  index,
+  updatePost,
+  removePost,
+  togglePublished,
+}: {
+  post: BlogPost;
+  index: number;
+  updatePost: (i: number, f: keyof BlogPost, v: unknown) => void;
+  removePost: (i: number) => void;
+  togglePublished: (i: number) => void;
+}) {
+  const controls = useDragControls();
+
+  return (
+    <Reorder.Item value={post} dragListener={false} dragControls={controls} whileDrag={{ scale: 0.98, opacity: 0.8, zIndex: 50 }} className="relative">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: index * 0.05 }}
+        className="bg-[#1e1e26] rounded-xl p-6 border border-white/5 space-y-4"
+      >
+        {/* Post header */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div
+              onPointerDown={(e) => {
+                e.preventDefault();
+                controls.start(e);
+                initDragScroll(e);
+              }}
+              className="cursor-grab active:cursor-grabbing p-3 -ml-3 rounded-md hover:bg-white/5 transition-colors touch-none select-none flex items-center justify-center shrink-0"
+              title="Drag to reorder"
+              style={{ touchAction: "none" }}
+            >
+              <FiMenu className="text-[#9a9aaa]/60" size={18} />
+            </div>
+            <span className="text-accent font-mono text-xs font-bold">
+              Post #{index + 1}
+            </span>
+            <span
+              className={`px-2 py-0.5 rounded text-[10px] font-mono ${
+                post.published
+                  ? "bg-green-500/10 text-green-400"
+                  : "bg-white/5 text-muted/50"
+              }`}
+            >
+              {post.published ? "Published" : "Draft"}
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => togglePublished(index)}
+              className="text-muted/40 hover:text-accent transition-colors p-1"
+              title={post.published ? "Unpublish" : "Publish"}
+            >
+              {post.published ? <FiEye size={16} /> : <FiEyeOff size={16} />}
+            </button>
+            <button
+              onClick={() => removePost(index)}
+              className="text-red-400/40 hover:text-red-400 transition-colors p-1"
+            >
+              <FiTrash2 size={16} />
+            </button>
+          </div>
+        </div>
+
+        {/* Title (full width) */}
+        <div>
+          <label className="block text-muted font-mono text-xs mb-1">Title</label>
+          <input
+            value={post.title}
+            onChange={(e) => updatePost(index, "title", e.target.value)}
+            className="w-full bg-[#14141a] text-white p-3 rounded-lg outline-none focus:ring-1 focus:ring-accent font-mono text-sm border border-white/5"
+            placeholder="My Blog Post Title"
+          />
+        </div>
+
+        {/* Cover Image uploader — file picker + drag & drop */}
+        <div>
+          <label className="block text-muted font-mono text-xs mb-2">Cover Image</label>
+          <ImageUploader
+            value={post.coverImage}
+            onChange={(url) => updatePost(index, "coverImage", url)}
+          />
+        </div>
+
+        {/* Slug + Tags */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-muted font-mono text-xs mb-1">Slug</label>
+            <input
+              value={post.slug}
+              onChange={(e) => updatePost(index, "slug", e.target.value)}
+              className="w-full bg-[#14141a] text-white/50 p-3 rounded-lg outline-none focus:ring-1 focus:ring-accent font-mono text-xs border border-white/5"
+              placeholder="auto-generated-from-title"
+            />
+          </div>
+          <div>
+            <label className="block text-muted font-mono text-xs mb-1">
+              Tags (comma-separated)
+            </label>
+            <input
+              value={post.tags.join(", ")}
+              onChange={(e) =>
+                updatePost(
+                  index,
+                  "tags",
+                  e.target.value.split(",").map((t) => t.trim()).filter(Boolean)
+                )
+              }
+              className="w-full bg-[#14141a] text-white p-3 rounded-lg outline-none focus:ring-1 focus:ring-accent font-mono text-sm border border-white/5"
+              placeholder="React, Next.js, TypeScript"
+            />
+          </div>
+        </div>
+
+        {/* Excerpt */}
+        <div>
+          <label className="block text-muted font-mono text-xs mb-1">Excerpt</label>
+          <textarea
+            rows={2}
+            value={post.excerpt}
+            onChange={(e) => updatePost(index, "excerpt", e.target.value)}
+            className="w-full bg-[#14141a] text-white p-3 rounded-lg outline-none focus:ring-1 focus:ring-accent font-mono text-sm border border-white/5 resize-none"
+            placeholder="A short description of the post..."
+          />
+          <TextFormatHint />
+        </div>
+
+        {/* Content */}
+        <div>
+          <label className="block text-muted font-mono text-xs mb-1">
+            Content (Markdown)
+          </label>
+          <textarea
+            rows={8}
+            value={post.content}
+            onChange={(e) => updatePost(index, "content", e.target.value)}
+            className="w-full bg-[#14141a] text-white p-3 rounded-lg outline-none focus:ring-1 focus:ring-accent font-mono text-xs border border-white/5 resize-y leading-relaxed"
+            placeholder={"# My Post\n\nWrite your content in Markdown..."}
+          />
+          <TextFormatHint />
+        </div>
+      </motion.div>
+    </Reorder.Item>
+  );
+}
 
 export default function BlogDashboardPage() {
   const { data, updateSection } = usePortfolio();
@@ -94,124 +246,18 @@ export default function BlogDashboardPage() {
         </button>
       </motion.div>
 
-      {posts.map((post, i) => (
-        <motion.div
-          key={post.id}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: i * 0.05 }}
-          className="bg-[#1e1e26] rounded-xl p-6 border border-white/5 space-y-4"
-        >
-          {/* Post header */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <span className="text-accent font-mono text-xs font-bold">
-                Post #{i + 1}
-              </span>
-              <span
-                className={`px-2 py-0.5 rounded text-[10px] font-mono ${
-                  post.published
-                    ? "bg-green-500/10 text-green-400"
-                    : "bg-white/5 text-muted/50"
-                }`}
-              >
-                {post.published ? "Published" : "Draft"}
-              </span>
-            </div>
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => togglePublished(i)}
-                className="text-muted/40 hover:text-accent transition-colors p-1"
-                title={post.published ? "Unpublish" : "Publish"}
-              >
-                {post.published ? <FiEye size={16} /> : <FiEyeOff size={16} />}
-              </button>
-              <button
-                onClick={() => removePost(i)}
-                className="text-red-400/40 hover:text-red-400 transition-colors p-1"
-              >
-                <FiTrash2 size={16} />
-              </button>
-            </div>
-          </div>
-
-          {/* Title (full width) */}
-          <div>
-            <label className="block text-muted font-mono text-xs mb-1">Title</label>
-            <input
-              value={post.title}
-              onChange={(e) => updatePost(i, "title", e.target.value)}
-              className="w-full bg-[#14141a] text-white p-3 rounded-lg outline-none focus:ring-1 focus:ring-accent font-mono text-sm border border-white/5"
-              placeholder="My Blog Post Title"
-            />
-          </div>
-
-          {/* Cover Image uploader — file picker + drag & drop */}
-          <div>
-            <label className="block text-muted font-mono text-xs mb-2">Cover Image</label>
-            <ImageUploader
-              value={post.coverImage}
-              onChange={(url) => updatePost(i, "coverImage", url)}
-            />
-          </div>
-
-          {/* Slug + Tags */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-muted font-mono text-xs mb-1">Slug</label>
-              <input
-                value={post.slug}
-                onChange={(e) => updatePost(i, "slug", e.target.value)}
-                className="w-full bg-[#14141a] text-white/50 p-3 rounded-lg outline-none focus:ring-1 focus:ring-accent font-mono text-xs border border-white/5"
-                placeholder="auto-generated-from-title"
-              />
-            </div>
-            <div>
-              <label className="block text-muted font-mono text-xs mb-1">
-                Tags (comma-separated)
-              </label>
-              <input
-                value={post.tags.join(", ")}
-                onChange={(e) =>
-                  updatePost(
-                    i,
-                    "tags",
-                    e.target.value.split(",").map((t) => t.trim()).filter(Boolean)
-                  )
-                }
-                className="w-full bg-[#14141a] text-white p-3 rounded-lg outline-none focus:ring-1 focus:ring-accent font-mono text-sm border border-white/5"
-                placeholder="React, Next.js, TypeScript"
-              />
-            </div>
-          </div>
-
-          {/* Excerpt */}
-          <div>
-            <label className="block text-muted font-mono text-xs mb-1">Excerpt</label>
-            <textarea
-              rows={2}
-              value={post.excerpt}
-              onChange={(e) => updatePost(i, "excerpt", e.target.value)}
-              className="w-full bg-[#14141a] text-white p-3 rounded-lg outline-none focus:ring-1 focus:ring-accent font-mono text-sm border border-white/5 resize-none"
-              placeholder="A short description of the post..."
-            />
-          </div>
-
-          {/* Content */}
-          <div>
-            <label className="block text-muted font-mono text-xs mb-1">
-              Content (Markdown)
-            </label>
-            <textarea
-              rows={8}
-              value={post.content}
-              onChange={(e) => updatePost(i, "content", e.target.value)}
-              className="w-full bg-[#14141a] text-white p-3 rounded-lg outline-none focus:ring-1 focus:ring-accent font-mono text-xs border border-white/5 resize-y leading-relaxed"
-              placeholder={"# My Post\n\nWrite your content in Markdown..."}
-            />
-          </div>
-        </motion.div>
-      ))}
+      <Reorder.Group axis="y" values={posts} onReorder={setPosts} className="space-y-6">
+        {posts.map((post, i) => (
+          <BlogItemCard
+            key={post.id}
+            post={post}
+            index={i}
+            updatePost={updatePost}
+            removePost={removePost}
+            togglePublished={togglePublished}
+          />
+        ))}
+      </Reorder.Group>
 
       <div ref={bottomRef} />
 

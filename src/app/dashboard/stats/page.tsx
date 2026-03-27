@@ -5,7 +5,9 @@ import { motion, Reorder, useDragControls } from "framer-motion";
 import { FiSave, FiMenu } from "react-icons/fi";
 import { usePortfolio } from "@/data/portfolio-context";
 import Toast from "@/components/dashboard/Toast";
+import TextFormatHint from "@/components/dashboard/TextFormatHint";
 import type { StatItem } from "@/data/portfolio-data";
+import { initDragScroll } from "@/utils/dragScroll";
 
 function StatItemCard({
   item,
@@ -19,7 +21,7 @@ function StatItemCard({
   const controls = useDragControls();
 
   return (
-    <Reorder.Item value={item} dragListener={false} dragControls={controls}>
+    <Reorder.Item value={item} dragListener={false} dragControls={controls} whileDrag={{ scale: 0.98, opacity: 0.8, zIndex: 50 }} className="relative">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -28,11 +30,16 @@ function StatItemCard({
       >
         <div className="flex items-center gap-2 mb-2">
           <div
-            onPointerDown={(e) => controls.start(e)}
-            className="cursor-grab active:cursor-grabbing p-2 -ml-2 rounded-md hover:bg-white/5 transition-colors"
+            onPointerDown={(e) => {
+              e.preventDefault();
+              controls.start(e);
+              initDragScroll(e);
+            }}
+            className="cursor-grab active:cursor-grabbing p-3 -ml-3 rounded-md hover:bg-white/5 transition-colors touch-none select-none flex items-center justify-center shrink-0"
             title="Drag to reorder"
+            style={{ touchAction: "none" }}
           >
-            <FiMenu className="text-[#9a9aaa]/60" />
+            <FiMenu className="text-[#9a9aaa]/60" size={18} />
           </div>
           <span className="text-[#9a9aaa] font-mono text-xs font-bold uppercase">Stat #{index + 1}</span>
         </div>
@@ -52,7 +59,7 @@ function StatItemCard({
             onChange={(e) => update(index, "label", e.target.value)}
             className="w-full bg-[#14141a] text-white p-3 rounded-lg outline-none focus:ring-1 focus:ring-accent transition-all font-mono text-sm border border-white/5"
           />
-          <p className="text-[#9a9aaa]/50 text-[10px] font-mono mt-1">Format text: **bold**, *italic*, [link text](url), & \n for new line.</p>
+          <TextFormatHint />
         </div>
       </motion.div>
     </Reorder.Item>
@@ -86,7 +93,7 @@ export default function StatsPage() {
         <p className="text-[#9a9aaa] font-mono text-sm mt-1">Edit the stats displayed on your home page.</p>
       </motion.div>
 
-      <Reorder.Group axis="y" values={stats} onReorder={setStats} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <Reorder.Group axis="y" values={stats} onReorder={setStats} className="flex flex-col gap-4">
         {stats.map((stat, i) => (
           <StatItemCard
             key={stat.label + i}

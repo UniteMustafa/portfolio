@@ -5,18 +5,20 @@ import { motion, Reorder, useDragControls } from "framer-motion";
 import { FiSave, FiPlus, FiTrash2, FiMenu } from "react-icons/fi";
 import { usePortfolio } from "@/data/portfolio-context";
 import Toast from "@/components/dashboard/Toast";
+import TextFormatHint from "@/components/dashboard/TextFormatHint";
 import type { ResumeData, ExperienceItem, EducationItem, SkillItem, AboutInfo } from "@/data/portfolio-data";
+import { initDragScroll } from "@/utils/dragScroll";
 
 type ResumeTab = "experience" | "education" | "skills" | "about";
 
 function ExpItemCard({ item, index, updateExp, removeExp }: any) {
   const controls = useDragControls();
   return (
-    <Reorder.Item value={item} dragListener={false} dragControls={controls}>
+    <Reorder.Item value={item} dragListener={false} dragControls={controls} whileDrag={{ scale: 0.98, opacity: 0.8, zIndex: 50 }} className="relative">
       <div className="bg-[#1e1e26] rounded-xl p-5 border border-white/5 space-y-3">
         <div className="flex items-center justify-between">
-          <div onPointerDown={(e) => controls.start(e)} className="cursor-grab active:cursor-grabbing p-2 -ml-2 hover:bg-white/5 rounded-md">
-            <FiMenu className="text-[#9a9aaa]/60" />
+          <div onPointerDown={(e) => { e.preventDefault(); controls.start(e); initDragScroll(e); }} className="cursor-grab active:cursor-grabbing p-3 -ml-3 shrink-0 hover:bg-white/5 rounded-md touch-none select-none flex items-center justify-center" style={{ touchAction: "none" }}>
+            <FiMenu className="text-[#9a9aaa]/60" size={18} />
           </div>
           <button onClick={() => removeExp(index)} className="text-red-400/60 hover:text-red-400 transition-colors p-1"><FiTrash2 size={14} /></button>
         </div>
@@ -33,11 +35,11 @@ function ExpItemCard({ item, index, updateExp, removeExp }: any) {
 function EduItemCard({ item, index, updateEdu, removeEdu }: any) {
   const controls = useDragControls();
   return (
-    <Reorder.Item value={item} dragListener={false} dragControls={controls}>
+    <Reorder.Item value={item} dragListener={false} dragControls={controls} whileDrag={{ scale: 0.98, opacity: 0.8, zIndex: 50 }} className="relative">
       <div className="bg-[#1e1e26] rounded-xl p-5 border border-white/5 space-y-3">
         <div className="flex items-center justify-between">
-          <div onPointerDown={(e) => controls.start(e)} className="cursor-grab active:cursor-grabbing p-2 -ml-2 hover:bg-white/5 rounded-md">
-            <FiMenu className="text-[#9a9aaa]/60" />
+          <div onPointerDown={(e) => { e.preventDefault(); controls.start(e); initDragScroll(e); }} className="cursor-grab active:cursor-grabbing p-3 -ml-3 shrink-0 hover:bg-white/5 rounded-md touch-none select-none flex items-center justify-center" style={{ touchAction: "none" }}>
+            <FiMenu className="text-[#9a9aaa]/60" size={18} />
           </div>
           <button onClick={() => removeEdu(index)} className="text-red-400/60 hover:text-red-400 transition-colors p-1"><FiTrash2 size={14} /></button>
         </div>
@@ -54,10 +56,10 @@ function EduItemCard({ item, index, updateEdu, removeEdu }: any) {
 function SkillItemCard({ item, index, updateSkill, removeSkill }: any) {
   const controls = useDragControls();
   return (
-    <Reorder.Item value={item} dragListener={false} dragControls={controls}>
+    <Reorder.Item value={item} dragListener={false} dragControls={controls} whileDrag={{ scale: 0.98, opacity: 0.8, zIndex: 50 }} className="relative">
       <div className="bg-[#1e1e26] rounded-xl p-4 border border-white/5 flex items-center gap-3">
-        <div onPointerDown={(e) => controls.start(e)} className="cursor-grab active:cursor-grabbing p-2 -ml-2 shrink-0 hover:bg-white/5 rounded-md">
-          <FiMenu className="text-[#9a9aaa]/60" />
+        <div onPointerDown={(e) => { e.preventDefault(); controls.start(e); initDragScroll(e); }} className="cursor-grab active:cursor-grabbing p-3 -ml-3 shrink-0 hover:bg-white/5 rounded-md touch-none select-none flex items-center justify-center" style={{ touchAction: "none" }}>
+          <FiMenu className="text-[#9a9aaa]/60" size={18} />
         </div>
         <select
           value={item.iconKey}
@@ -88,10 +90,10 @@ function SkillItemCard({ item, index, updateSkill, removeSkill }: any) {
 function AboutItemCard({ item, index, updateAbout, removeAbout }: any) {
   const controls = useDragControls();
   return (
-    <Reorder.Item value={item} dragListener={false} dragControls={controls}>
+    <Reorder.Item value={item} dragListener={false} dragControls={controls} whileDrag={{ scale: 0.98, opacity: 0.8, zIndex: 50 }} className="relative">
       <div className="bg-[#1e1e26] rounded-xl p-4 border border-white/5 flex flex-col sm:flex-row items-center gap-3">
-        <div onPointerDown={(e) => controls.start(e)} className="cursor-grab active:cursor-grabbing p-2 -ml-2 shrink-0 hover:bg-white/5 rounded-md self-start sm:self-auto">
-          <FiMenu className="text-[#9a9aaa]/60" />
+        <div onPointerDown={(e) => { e.preventDefault(); controls.start(e); initDragScroll(e); }} className="cursor-grab active:cursor-grabbing p-3 -ml-3 shrink-0 hover:bg-white/5 rounded-md self-start sm:self-auto touch-none select-none flex items-center justify-center" style={{ touchAction: "none" }}>
+          <FiMenu className="text-[#9a9aaa]/60" size={18} />
         </div>
         <input value={item.fieldName} onChange={(e) => updateAbout(index, "fieldName", e.target.value)} placeholder="Field name" className="w-full sm:w-[180px] bg-[#14141a] text-white px-3 py-2.5 rounded-lg font-mono text-sm border border-white/5 outline-none focus:ring-1 focus:ring-accent" />
         <input value={item.fieldValue} onChange={(e) => updateAbout(index, "fieldValue", e.target.value)} placeholder="Field value" className="flex-1 w-full bg-[#14141a] text-white px-3 py-2.5 rounded-lg font-mono text-sm border border-white/5 outline-none focus:ring-1 focus:ring-accent" />
@@ -103,12 +105,23 @@ function AboutItemCard({ item, index, updateAbout, removeAbout }: any) {
 
 export default function ResumeDashboardPage() {
   const { data, updateSection } = usePortfolio();
-  const [resume, setResume] = useState<ResumeData>(data.resume);
+  
+  // Inject stable _ids into items so Reorder component physics works flawlessly
+  const [resume, setResume] = useState<any>(() => {
+    return {
+      ...data.resume,
+      experienceItems: data.resume.experienceItems.map((item: any) => ({ ...item, _id: item._id || crypto.randomUUID() })),
+      educationItems: data.resume.educationItems.map((item: any) => ({ ...item, _id: item._id || crypto.randomUUID() })),
+      skillsList: data.resume.skillsList.map((item: any) => ({ ...item, _id: item._id || crypto.randomUUID() })),
+      aboutInfo: data.resume.aboutInfo.map((item: any) => ({ ...item, _id: item._id || crypto.randomUUID() })),
+    };
+  });
+  
   const [activeTab, setActiveTab] = useState<ResumeTab>("experience");
   const [toast, setToast] = useState(false);
 
   const save = () => {
-    updateSection("resume", resume);
+    updateSection("resume", resume as ResumeData);
     setToast(true);
   };
 
@@ -116,85 +129,85 @@ export default function ResumeDashboardPage() {
 
   // Experience helpers
   const updateExp = (i: number, field: keyof ExperienceItem, value: string) => {
-    setResume((prev) => {
+    setResume((prev: any) => {
       const items = [...prev.experienceItems];
       items[i] = { ...items[i], [field]: value };
       return { ...prev, experienceItems: items };
     });
   };
   const addExp = () => {
-    setResume((prev) => ({
+    setResume((prev: any) => ({
       ...prev,
-      experienceItems: [...prev.experienceItems, { company: "", position: "", duration: "" }],
+      experienceItems: [...prev.experienceItems, { company: "", position: "", duration: "", _id: crypto.randomUUID() }],
     }));
   };
   const removeExp = (i: number) => {
-    setResume((prev) => ({
+    setResume((prev: any) => ({
       ...prev,
-      experienceItems: prev.experienceItems.filter((_, idx) => idx !== i),
+      experienceItems: prev.experienceItems.filter((_: any, idx: number) => idx !== i),
     }));
   };
 
   // Education helpers
   const updateEdu = (i: number, field: keyof EducationItem, value: string) => {
-    setResume((prev) => {
+    setResume((prev: any) => {
       const items = [...prev.educationItems];
       items[i] = { ...items[i], [field]: value };
       return { ...prev, educationItems: items };
     });
   };
   const addEdu = () => {
-    setResume((prev) => ({
+    setResume((prev: any) => ({
       ...prev,
-      educationItems: [...prev.educationItems, { institution: "", degree: "", duration: "" }],
+      educationItems: [...prev.educationItems, { institution: "", degree: "", duration: "", _id: crypto.randomUUID() }],
     }));
   };
   const removeEdu = (i: number) => {
-    setResume((prev) => ({
+    setResume((prev: any) => ({
       ...prev,
-      educationItems: prev.educationItems.filter((_, idx) => idx !== i),
+      educationItems: prev.educationItems.filter((_: any, idx: number) => idx !== i),
     }));
   };
 
   // Skills helpers
   const updateSkill = (i: number, field: keyof SkillItem, value: string) => {
-    setResume((prev) => {
+    setResume((prev: any) => {
       const items = [...prev.skillsList];
       items[i] = { ...items[i], [field]: value };
       return { ...prev, skillsList: items };
     });
   };
   const addSkill = () => {
-    setResume((prev) => ({
+    setResume((prev: any) => ({
       ...prev,
-      skillsList: [...prev.skillsList, { iconKey: "html", name: "" }],
+      skillsList: [...prev.skillsList, { iconKey: "html", name: "", _id: crypto.randomUUID() }],
     }));
   };
   const removeSkill = (i: number) => {
-    setResume((prev) => ({
+    setResume((prev: any) => ({
       ...prev,
-      skillsList: prev.skillsList.filter((_, idx) => idx !== i),
+      skillsList: prev.skillsList.filter((_: any, idx: number) => idx !== i),
     }));
   };
 
   // About helpers
   const updateAbout = (i: number, field: keyof AboutInfo, value: string) => {
-    setResume((prev) => {
+    setResume((prev: any) => {
       const items = [...prev.aboutInfo];
       items[i] = { ...items[i], [field]: value };
       return { ...prev, aboutInfo: items };
     });
   };
   const addAbout = () => {
-    setResume((prev) => ({
+    setResume((prev: any) => ({
       ...prev,
-      aboutInfo: [...prev.aboutInfo, { fieldName: "", fieldValue: "" }],
+      aboutInfo: [...prev.aboutInfo, { fieldName: "", fieldValue: "", _id: crypto.randomUUID() }],
     }));
   };
   const removeAbout = (i: number) => {
-    setResume((prev) => ({
+    setResume((prev: any) => ({
       ...prev,
-      aboutInfo: prev.aboutInfo.filter((_, idx) => idx !== i),
+      aboutInfo: prev.aboutInfo.filter((_: any, idx: number) => idx !== i),
     }));
   };
 
@@ -237,7 +250,7 @@ export default function ResumeDashboardPage() {
               <label className="block text-[#9a9aaa] font-mono text-xs mb-2">Section Title</label>
               <input
                 value={resume.experienceTitle}
-                onChange={(e) => setResume((p) => ({ ...p, experienceTitle: e.target.value }))}
+                onChange={(e) => setResume((p: any) => ({ ...p, experienceTitle: e.target.value }))}
                 className="w-full bg-[#14141a] text-white p-3 rounded-lg outline-none focus:ring-1 focus:ring-accent font-mono text-sm border border-white/5"
               />
             </div>
@@ -246,10 +259,10 @@ export default function ResumeDashboardPage() {
               <textarea
                 rows={2}
                 value={resume.experienceDescription}
-                onChange={(e) => setResume((p) => ({ ...p, experienceDescription: e.target.value }))}
+                onChange={(e) => setResume((p: any) => ({ ...p, experienceDescription: e.target.value }))}
                 className="w-full bg-[#14141a] text-white p-3 rounded-lg outline-none focus:ring-1 focus:ring-accent font-mono text-sm border border-white/5 resize-none"
               />
-              <p className="text-[#9a9aaa]/50 text-[10px] font-mono mt-1">Format text: **bold**, *italic*, [link text](url), & \n for new line.</p>
+              <TextFormatHint />
             </div>
           </div>
 
@@ -260,9 +273,9 @@ export default function ResumeDashboardPage() {
             </button>
           </div>
 
-          <Reorder.Group axis="y" values={resume.experienceItems} onReorder={(newOrder) => setResume(p => ({ ...p, experienceItems: newOrder }))} className="space-y-3">
-            {resume.experienceItems.map((item, i) => (
-              <ExpItemCard key={item.company + item.position + i} item={item} index={i} updateExp={updateExp} removeExp={removeExp} />
+          <Reorder.Group axis="y" values={resume.experienceItems} onReorder={(newOrder) => setResume((p: any) => ({ ...p, experienceItems: newOrder }))} className="space-y-3">
+            {resume.experienceItems.map((item: any, i: number) => (
+              <ExpItemCard key={item._id} item={item} index={i} updateExp={updateExp} removeExp={removeExp} />
             ))}
           </Reorder.Group>
         </motion.div>
@@ -274,12 +287,12 @@ export default function ResumeDashboardPage() {
           <div className="bg-[#1e1e26] rounded-xl p-5 border border-white/5 space-y-4">
             <div>
               <label className="block text-[#9a9aaa] font-mono text-xs mb-2">Section Title</label>
-              <input value={resume.educationTitle} onChange={(e) => setResume((p) => ({ ...p, educationTitle: e.target.value }))} className="w-full bg-[#14141a] text-white p-3 rounded-lg outline-none focus:ring-1 focus:ring-accent font-mono text-sm border border-white/5" />
+              <input value={resume.educationTitle} onChange={(e) => setResume((p: any) => ({ ...p, educationTitle: e.target.value }))} className="w-full bg-[#14141a] text-white p-3 rounded-lg outline-none focus:ring-1 focus:ring-accent font-mono text-sm border border-white/5" />
             </div>
             <div>
               <label className="block text-[#9a9aaa] font-mono text-xs mb-2">Section Description</label>
-              <textarea rows={2} value={resume.educationDescription} onChange={(e) => setResume((p) => ({ ...p, educationDescription: e.target.value }))} className="w-full bg-[#14141a] text-white p-3 rounded-lg outline-none focus:ring-1 focus:ring-accent font-mono text-sm border border-white/5 resize-none" />
-              <p className="text-[#9a9aaa]/50 text-[10px] font-mono mt-1">Format text: **bold**, *italic*, [link text](url), & \n for new line.</p>
+              <textarea rows={2} value={resume.educationDescription} onChange={(e) => setResume((p: any) => ({ ...p, educationDescription: e.target.value }))} className="w-full bg-[#14141a] text-white p-3 rounded-lg outline-none focus:ring-1 focus:ring-accent font-mono text-sm border border-white/5 resize-none" />
+              <TextFormatHint />
             </div>
           </div>
 
@@ -288,9 +301,9 @@ export default function ResumeDashboardPage() {
             <button onClick={addEdu} className="flex items-center gap-2 px-3 py-2 rounded-lg bg-accent/10 text-accent font-mono text-xs hover:bg-accent/20 transition-colors"><FiPlus size={14} /> Add</button>
           </div>
 
-          <Reorder.Group axis="y" values={resume.educationItems} onReorder={(newOrder) => setResume(p => ({ ...p, educationItems: newOrder }))} className="space-y-3">
-            {resume.educationItems.map((item, i) => (
-              <EduItemCard key={item.institution + item.degree + i} item={item} index={i} updateEdu={updateEdu} removeEdu={removeEdu} />
+          <Reorder.Group axis="y" values={resume.educationItems} onReorder={(newOrder) => setResume((p: any) => ({ ...p, educationItems: newOrder }))} className="space-y-3">
+            {resume.educationItems.map((item: any, i: number) => (
+              <EduItemCard key={item._id} item={item} index={i} updateEdu={updateEdu} removeEdu={removeEdu} />
             ))}
           </Reorder.Group>
         </motion.div>
@@ -302,12 +315,12 @@ export default function ResumeDashboardPage() {
           <div className="bg-[#1e1e26] rounded-xl p-5 border border-white/5 space-y-4">
             <div>
               <label className="block text-[#9a9aaa] font-mono text-xs mb-2">Section Title</label>
-              <input value={resume.skillsTitle} onChange={(e) => setResume((p) => ({ ...p, skillsTitle: e.target.value }))} className="w-full bg-[#14141a] text-white p-3 rounded-lg outline-none focus:ring-1 focus:ring-accent font-mono text-sm border border-white/5" />
+              <input value={resume.skillsTitle} onChange={(e) => setResume((p: any) => ({ ...p, skillsTitle: e.target.value }))} className="w-full bg-[#14141a] text-white p-3 rounded-lg outline-none focus:ring-1 focus:ring-accent font-mono text-sm border border-white/5" />
             </div>
             <div>
               <label className="block text-[#9a9aaa] font-mono text-xs mb-2">Section Description</label>
-              <textarea rows={2} value={resume.skillsDescription} onChange={(e) => setResume((p) => ({ ...p, skillsDescription: e.target.value }))} className="w-full bg-[#14141a] text-white p-3 rounded-lg outline-none focus:ring-1 focus:ring-accent font-mono text-sm border border-white/5 resize-none" />
-              <p className="text-[#9a9aaa]/50 text-[10px] font-mono mt-1">Format text: **bold**, *italic*, [link text](url), & \n for new line.</p>
+              <textarea rows={2} value={resume.skillsDescription} onChange={(e) => setResume((p: any) => ({ ...p, skillsDescription: e.target.value }))} className="w-full bg-[#14141a] text-white p-3 rounded-lg outline-none focus:ring-1 focus:ring-accent font-mono text-sm border border-white/5 resize-none" />
+              <TextFormatHint />
             </div>
           </div>
 
@@ -316,9 +329,9 @@ export default function ResumeDashboardPage() {
             <button onClick={addSkill} className="flex items-center gap-2 px-3 py-2 rounded-lg bg-accent/10 text-accent font-mono text-xs hover:bg-accent/20 transition-colors"><FiPlus size={14} /> Add</button>
           </div>
 
-          <Reorder.Group axis="y" values={resume.skillsList} onReorder={(newOrder) => setResume(p => ({ ...p, skillsList: newOrder }))} className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {resume.skillsList.map((skill, i) => (
-              <SkillItemCard key={skill.name + skill.iconKey + i} item={skill} index={i} updateSkill={updateSkill} removeSkill={removeSkill} />
+          <Reorder.Group axis="y" values={resume.skillsList} onReorder={(newOrder) => setResume((p: any) => ({ ...p, skillsList: newOrder }))} className="flex flex-col gap-3">
+            {resume.skillsList.map((skill: any, i: number) => (
+              <SkillItemCard key={skill._id} item={skill} index={i} updateSkill={updateSkill} removeSkill={removeSkill} />
             ))}
           </Reorder.Group>
         </motion.div>
@@ -330,11 +343,11 @@ export default function ResumeDashboardPage() {
           <div className="bg-[#1e1e26] rounded-xl p-5 border border-white/5 space-y-4">
             <div>
               <label className="block text-[#9a9aaa] font-mono text-xs mb-2">Section Title</label>
-              <input value={resume.aboutTitle} onChange={(e) => setResume((p) => ({ ...p, aboutTitle: e.target.value }))} className="w-full bg-[#14141a] text-white p-3 rounded-lg outline-none focus:ring-1 focus:ring-accent font-mono text-sm border border-white/5" />
+              <input value={resume.aboutTitle} onChange={(e) => setResume((p: any) => ({ ...p, aboutTitle: e.target.value }))} className="w-full bg-[#14141a] text-white p-3 rounded-lg outline-none focus:ring-1 focus:ring-accent font-mono text-sm border border-white/5" />
             </div>
             <div>
               <label className="block text-[#9a9aaa] font-mono text-xs mb-2">Section Description</label>
-              <textarea rows={2} value={resume.aboutDescription} onChange={(e) => setResume((p) => ({ ...p, aboutDescription: e.target.value }))} className="w-full bg-[#14141a] text-white p-3 rounded-lg outline-none focus:ring-1 focus:ring-accent font-mono text-sm border border-white/5 resize-none" />
+              <textarea rows={2} value={resume.aboutDescription} onChange={(e) => setResume((p: any) => ({ ...p, aboutDescription: e.target.value }))} className="w-full bg-[#14141a] text-white p-3 rounded-lg outline-none focus:ring-1 focus:ring-accent font-mono text-sm border border-white/5 resize-none" />
               <p className="text-[#9a9aaa]/50 text-[10px] font-mono mt-1">Format text: **bold**, *italic*, [link text](url), & \n for new line.</p>
             </div>
           </div>
@@ -344,9 +357,9 @@ export default function ResumeDashboardPage() {
             <button onClick={addAbout} className="flex items-center gap-2 px-3 py-2 rounded-lg bg-accent/10 text-accent font-mono text-xs hover:bg-accent/20 transition-colors"><FiPlus size={14} /> Add</button>
           </div>
 
-          <Reorder.Group axis="y" values={resume.aboutInfo} onReorder={(newOrder) => setResume(p => ({ ...p, aboutInfo: newOrder }))} className="space-y-3">
-            {resume.aboutInfo.map((item, i) => (
-              <AboutItemCard key={item.fieldName + i} item={item} index={i} updateAbout={updateAbout} removeAbout={removeAbout} />
+          <Reorder.Group axis="y" values={resume.aboutInfo} onReorder={(newOrder) => setResume((p: any) => ({ ...p, aboutInfo: newOrder }))} className="space-y-3">
+            {resume.aboutInfo.map((item: any, i: number) => (
+              <AboutItemCard key={item._id} item={item} index={i} updateAbout={updateAbout} removeAbout={removeAbout} />
             ))}
           </Reorder.Group>
         </motion.div>

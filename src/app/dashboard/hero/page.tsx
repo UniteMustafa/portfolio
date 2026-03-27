@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { FiSave, FiPlus, FiTrash2 } from "react-icons/fi";
 import { usePortfolio } from "@/data/portfolio-context";
 import Toast from "@/components/dashboard/Toast";
+import TextFormatHint from "@/components/dashboard/TextFormatHint";
 import ImageUploader from "@/components/dashboard/ImageUploader";
 import type { SocialLink } from "@/data/portfolio-data";
 
@@ -88,6 +89,7 @@ export default function HeroPage() {
             onChange={(e) => updateField("description", e.target.value)}
             className="w-full bg-[#14141a] text-white p-3.5 rounded-lg outline-none focus:ring-1 focus:ring-accent transition-all font-mono text-sm border border-white/5 resize-none"
           />
+          <TextFormatHint />
         </div>
 
         {/* Photo Upload */}
