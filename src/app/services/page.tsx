@@ -4,6 +4,8 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { BsArrowDownRight } from "react-icons/bs";
 import { usePortfolio } from "@/data/portfolio-context";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 export default function ServicesPage() {
   const { data } = usePortfolio();
@@ -46,9 +48,14 @@ export default function ServicesPage() {
                 </h2>
                 
                 {/* Description */}
-                <p style={{ color: "var(--color-text-muted)", fontFamily: "JetBrains Mono, monospace" }}>
-                  {item.description}
-                </p>
+                <div 
+                  className="prose prose-invert prose-p:my-0 prose-a:text-accent hover:prose-a:text-accent-hover prose-strong:text-white prose-em:text-white/80"
+                  style={{ color: "var(--color-text-muted)", fontFamily: "JetBrains Mono, monospace", whiteSpace: "pre-line" }}
+                >
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                    {item.description}
+                  </ReactMarkdown>
+                </div>
                 
                 {/* Divider Line */}
                 <div className="border-b border-white/20 w-full mt-4"></div>

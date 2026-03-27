@@ -1,13 +1,105 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { motion } from "framer-motion";
-import { FiSave, FiPlus, FiTrash2 } from "react-icons/fi";
+import { motion, Reorder, useDragControls } from "framer-motion";
+import { FiSave, FiPlus, FiTrash2, FiMenu } from "react-icons/fi";
 import { usePortfolio } from "@/data/portfolio-context";
 import Toast from "@/components/dashboard/Toast";
 import type { ResumeData, ExperienceItem, EducationItem, SkillItem, AboutInfo } from "@/data/portfolio-data";
 
 type ResumeTab = "experience" | "education" | "skills" | "about";
+
+function ExpItemCard({ item, index, updateExp, removeExp }: any) {
+  const controls = useDragControls();
+  return (
+    <Reorder.Item value={item} dragListener={false} dragControls={controls}>
+      <div className="bg-[#1e1e26] rounded-xl p-5 border border-white/5 space-y-3">
+        <div className="flex items-center justify-between">
+          <div onPointerDown={(e) => controls.start(e)} className="cursor-grab active:cursor-grabbing p-2 -ml-2 hover:bg-white/5 rounded-md">
+            <FiMenu className="text-[#9a9aaa]/60" />
+          </div>
+          <button onClick={() => removeExp(index)} className="text-red-400/60 hover:text-red-400 transition-colors p-1"><FiTrash2 size={14} /></button>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <input value={item.position} onChange={(e) => updateExp(index, "position", e.target.value)} placeholder="Position" className="bg-[#14141a] text-white p-3 rounded-lg outline-none focus:ring-1 focus:ring-accent font-mono text-sm border border-white/5" />
+          <input value={item.company} onChange={(e) => updateExp(index, "company", e.target.value)} placeholder="Company" className="bg-[#14141a] text-white p-3 rounded-lg outline-none focus:ring-1 focus:ring-accent font-mono text-sm border border-white/5" />
+          <input value={item.duration} onChange={(e) => updateExp(index, "duration", e.target.value)} placeholder="Duration" className="bg-[#14141a] text-white p-3 rounded-lg outline-none focus:ring-1 focus:ring-accent font-mono text-sm border border-white/5" />
+        </div>
+      </div>
+    </Reorder.Item>
+  );
+}
+
+function EduItemCard({ item, index, updateEdu, removeEdu }: any) {
+  const controls = useDragControls();
+  return (
+    <Reorder.Item value={item} dragListener={false} dragControls={controls}>
+      <div className="bg-[#1e1e26] rounded-xl p-5 border border-white/5 space-y-3">
+        <div className="flex items-center justify-between">
+          <div onPointerDown={(e) => controls.start(e)} className="cursor-grab active:cursor-grabbing p-2 -ml-2 hover:bg-white/5 rounded-md">
+            <FiMenu className="text-[#9a9aaa]/60" />
+          </div>
+          <button onClick={() => removeEdu(index)} className="text-red-400/60 hover:text-red-400 transition-colors p-1"><FiTrash2 size={14} /></button>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <input value={item.degree} onChange={(e) => updateEdu(index, "degree", e.target.value)} placeholder="Degree" className="bg-[#14141a] text-white p-3 rounded-lg outline-none focus:ring-1 focus:ring-accent font-mono text-sm border border-white/5" />
+          <input value={item.institution} onChange={(e) => updateEdu(index, "institution", e.target.value)} placeholder="Institution" className="bg-[#14141a] text-white p-3 rounded-lg outline-none focus:ring-1 focus:ring-accent font-mono text-sm border border-white/5" />
+          <input value={item.duration} onChange={(e) => updateEdu(index, "duration", e.target.value)} placeholder="Duration" className="bg-[#14141a] text-white p-3 rounded-lg outline-none focus:ring-1 focus:ring-accent font-mono text-sm border border-white/5" />
+        </div>
+      </div>
+    </Reorder.Item>
+  );
+}
+
+function SkillItemCard({ item, index, updateSkill, removeSkill }: any) {
+  const controls = useDragControls();
+  return (
+    <Reorder.Item value={item} dragListener={false} dragControls={controls}>
+      <div className="bg-[#1e1e26] rounded-xl p-4 border border-white/5 flex items-center gap-3">
+        <div onPointerDown={(e) => controls.start(e)} className="cursor-grab active:cursor-grabbing p-2 -ml-2 shrink-0 hover:bg-white/5 rounded-md">
+          <FiMenu className="text-[#9a9aaa]/60" />
+        </div>
+        <select
+          value={item.iconKey}
+          onChange={(e) => updateSkill(index, "iconKey", e.target.value)}
+          className="bg-[#14141a] text-white px-3 py-2.5 rounded-lg font-mono text-sm border border-white/5 outline-none focus:ring-1 focus:ring-accent w-[120px]"
+        >
+          <option value="html">HTML</option>
+          <option value="css">CSS</option>
+          <option value="js">JavaScript</option>
+          <option value="react">React</option>
+          <option value="next">Next.js</option>
+          <option value="tailwind">Tailwind</option>
+          <option value="node">Node.js</option>
+          <option value="figma">Figma</option>
+        </select>
+        <input
+          value={item.name}
+          onChange={(e) => updateSkill(index, "name", e.target.value)}
+          placeholder="Skill name"
+          className="flex-1 bg-[#14141a] text-white px-3 py-2.5 rounded-lg font-mono text-sm border border-white/5 outline-none focus:ring-1 focus:ring-accent"
+        />
+        <button onClick={() => removeSkill(index)} className="text-red-400/60 hover:text-red-400 transition-colors p-1 shrink-0"><FiTrash2 size={14} /></button>
+      </div>
+    </Reorder.Item>
+  );
+}
+
+function AboutItemCard({ item, index, updateAbout, removeAbout }: any) {
+  const controls = useDragControls();
+  return (
+    <Reorder.Item value={item} dragListener={false} dragControls={controls}>
+      <div className="bg-[#1e1e26] rounded-xl p-4 border border-white/5 flex flex-col sm:flex-row items-center gap-3">
+        <div onPointerDown={(e) => controls.start(e)} className="cursor-grab active:cursor-grabbing p-2 -ml-2 shrink-0 hover:bg-white/5 rounded-md self-start sm:self-auto">
+          <FiMenu className="text-[#9a9aaa]/60" />
+        </div>
+        <input value={item.fieldName} onChange={(e) => updateAbout(index, "fieldName", e.target.value)} placeholder="Field name" className="w-full sm:w-[180px] bg-[#14141a] text-white px-3 py-2.5 rounded-lg font-mono text-sm border border-white/5 outline-none focus:ring-1 focus:ring-accent" />
+        <input value={item.fieldValue} onChange={(e) => updateAbout(index, "fieldValue", e.target.value)} placeholder="Field value" className="flex-1 w-full bg-[#14141a] text-white px-3 py-2.5 rounded-lg font-mono text-sm border border-white/5 outline-none focus:ring-1 focus:ring-accent" />
+        <button onClick={() => removeAbout(index)} className="text-red-400/60 hover:text-red-400 transition-colors p-1 shrink-0 self-end sm:self-auto"><FiTrash2 size={14} /></button>
+      </div>
+    </Reorder.Item>
+  );
+}
 
 export default function ResumeDashboardPage() {
   const { data, updateSection } = usePortfolio();
@@ -157,6 +249,7 @@ export default function ResumeDashboardPage() {
                 onChange={(e) => setResume((p) => ({ ...p, experienceDescription: e.target.value }))}
                 className="w-full bg-[#14141a] text-white p-3 rounded-lg outline-none focus:ring-1 focus:ring-accent font-mono text-sm border border-white/5 resize-none"
               />
+              <p className="text-[#9a9aaa]/50 text-[10px] font-mono mt-1">Format text: **bold**, *italic*, [link text](url), & \n for new line.</p>
             </div>
           </div>
 
@@ -167,18 +260,11 @@ export default function ResumeDashboardPage() {
             </button>
           </div>
 
-          {resume.experienceItems.map((item, i) => (
-            <div key={i} className="bg-[#1e1e26] rounded-xl p-5 border border-white/5 space-y-3">
-              <div className="flex justify-end">
-                <button onClick={() => removeExp(i)} className="text-red-400/60 hover:text-red-400 transition-colors p-1"><FiTrash2 size={14} /></button>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <input value={item.position} onChange={(e) => updateExp(i, "position", e.target.value)} placeholder="Position" className="bg-[#14141a] text-white p-3 rounded-lg outline-none focus:ring-1 focus:ring-accent font-mono text-sm border border-white/5" />
-                <input value={item.company} onChange={(e) => updateExp(i, "company", e.target.value)} placeholder="Company" className="bg-[#14141a] text-white p-3 rounded-lg outline-none focus:ring-1 focus:ring-accent font-mono text-sm border border-white/5" />
-                <input value={item.duration} onChange={(e) => updateExp(i, "duration", e.target.value)} placeholder="Duration" className="bg-[#14141a] text-white p-3 rounded-lg outline-none focus:ring-1 focus:ring-accent font-mono text-sm border border-white/5" />
-              </div>
-            </div>
-          ))}
+          <Reorder.Group axis="y" values={resume.experienceItems} onReorder={(newOrder) => setResume(p => ({ ...p, experienceItems: newOrder }))} className="space-y-3">
+            {resume.experienceItems.map((item, i) => (
+              <ExpItemCard key={item.company + item.position + i} item={item} index={i} updateExp={updateExp} removeExp={removeExp} />
+            ))}
+          </Reorder.Group>
         </motion.div>
       )}
 
@@ -193,6 +279,7 @@ export default function ResumeDashboardPage() {
             <div>
               <label className="block text-[#9a9aaa] font-mono text-xs mb-2">Section Description</label>
               <textarea rows={2} value={resume.educationDescription} onChange={(e) => setResume((p) => ({ ...p, educationDescription: e.target.value }))} className="w-full bg-[#14141a] text-white p-3 rounded-lg outline-none focus:ring-1 focus:ring-accent font-mono text-sm border border-white/5 resize-none" />
+              <p className="text-[#9a9aaa]/50 text-[10px] font-mono mt-1">Format text: **bold**, *italic*, [link text](url), & \n for new line.</p>
             </div>
           </div>
 
@@ -201,16 +288,11 @@ export default function ResumeDashboardPage() {
             <button onClick={addEdu} className="flex items-center gap-2 px-3 py-2 rounded-lg bg-accent/10 text-accent font-mono text-xs hover:bg-accent/20 transition-colors"><FiPlus size={14} /> Add</button>
           </div>
 
-          {resume.educationItems.map((item, i) => (
-            <div key={i} className="bg-[#1e1e26] rounded-xl p-5 border border-white/5 space-y-3">
-              <div className="flex justify-end"><button onClick={() => removeEdu(i)} className="text-red-400/60 hover:text-red-400 transition-colors p-1"><FiTrash2 size={14} /></button></div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <input value={item.degree} onChange={(e) => updateEdu(i, "degree", e.target.value)} placeholder="Degree" className="bg-[#14141a] text-white p-3 rounded-lg outline-none focus:ring-1 focus:ring-accent font-mono text-sm border border-white/5" />
-                <input value={item.institution} onChange={(e) => updateEdu(i, "institution", e.target.value)} placeholder="Institution" className="bg-[#14141a] text-white p-3 rounded-lg outline-none focus:ring-1 focus:ring-accent font-mono text-sm border border-white/5" />
-                <input value={item.duration} onChange={(e) => updateEdu(i, "duration", e.target.value)} placeholder="Duration" className="bg-[#14141a] text-white p-3 rounded-lg outline-none focus:ring-1 focus:ring-accent font-mono text-sm border border-white/5" />
-              </div>
-            </div>
-          ))}
+          <Reorder.Group axis="y" values={resume.educationItems} onReorder={(newOrder) => setResume(p => ({ ...p, educationItems: newOrder }))} className="space-y-3">
+            {resume.educationItems.map((item, i) => (
+              <EduItemCard key={item.institution + item.degree + i} item={item} index={i} updateEdu={updateEdu} removeEdu={removeEdu} />
+            ))}
+          </Reorder.Group>
         </motion.div>
       )}
 
@@ -225,6 +307,7 @@ export default function ResumeDashboardPage() {
             <div>
               <label className="block text-[#9a9aaa] font-mono text-xs mb-2">Section Description</label>
               <textarea rows={2} value={resume.skillsDescription} onChange={(e) => setResume((p) => ({ ...p, skillsDescription: e.target.value }))} className="w-full bg-[#14141a] text-white p-3 rounded-lg outline-none focus:ring-1 focus:ring-accent font-mono text-sm border border-white/5 resize-none" />
+              <p className="text-[#9a9aaa]/50 text-[10px] font-mono mt-1">Format text: **bold**, *italic*, [link text](url), & \n for new line.</p>
             </div>
           </div>
 
@@ -233,33 +316,11 @@ export default function ResumeDashboardPage() {
             <button onClick={addSkill} className="flex items-center gap-2 px-3 py-2 rounded-lg bg-accent/10 text-accent font-mono text-xs hover:bg-accent/20 transition-colors"><FiPlus size={14} /> Add</button>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <Reorder.Group axis="y" values={resume.skillsList} onReorder={(newOrder) => setResume(p => ({ ...p, skillsList: newOrder }))} className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {resume.skillsList.map((skill, i) => (
-              <div key={i} className="bg-[#1e1e26] rounded-xl p-4 border border-white/5 flex items-center gap-3">
-                <select
-                  value={skill.iconKey}
-                  onChange={(e) => updateSkill(i, "iconKey", e.target.value)}
-                  className="bg-[#14141a] text-white px-3 py-2.5 rounded-lg font-mono text-sm border border-white/5 outline-none focus:ring-1 focus:ring-accent w-[120px]"
-                >
-                  <option value="html">HTML</option>
-                  <option value="css">CSS</option>
-                  <option value="js">JavaScript</option>
-                  <option value="react">React</option>
-                  <option value="next">Next.js</option>
-                  <option value="tailwind">Tailwind</option>
-                  <option value="node">Node.js</option>
-                  <option value="figma">Figma</option>
-                </select>
-                <input
-                  value={skill.name}
-                  onChange={(e) => updateSkill(i, "name", e.target.value)}
-                  placeholder="Skill name"
-                  className="flex-1 bg-[#14141a] text-white px-3 py-2.5 rounded-lg font-mono text-sm border border-white/5 outline-none focus:ring-1 focus:ring-accent"
-                />
-                <button onClick={() => removeSkill(i)} className="text-red-400/60 hover:text-red-400 transition-colors p-1"><FiTrash2 size={14} /></button>
-              </div>
+              <SkillItemCard key={skill.name + skill.iconKey + i} item={skill} index={i} updateSkill={updateSkill} removeSkill={removeSkill} />
             ))}
-          </div>
+          </Reorder.Group>
         </motion.div>
       )}
 
@@ -274,6 +335,7 @@ export default function ResumeDashboardPage() {
             <div>
               <label className="block text-[#9a9aaa] font-mono text-xs mb-2">Section Description</label>
               <textarea rows={2} value={resume.aboutDescription} onChange={(e) => setResume((p) => ({ ...p, aboutDescription: e.target.value }))} className="w-full bg-[#14141a] text-white p-3 rounded-lg outline-none focus:ring-1 focus:ring-accent font-mono text-sm border border-white/5 resize-none" />
+              <p className="text-[#9a9aaa]/50 text-[10px] font-mono mt-1">Format text: **bold**, *italic*, [link text](url), & \n for new line.</p>
             </div>
           </div>
 
@@ -282,13 +344,11 @@ export default function ResumeDashboardPage() {
             <button onClick={addAbout} className="flex items-center gap-2 px-3 py-2 rounded-lg bg-accent/10 text-accent font-mono text-xs hover:bg-accent/20 transition-colors"><FiPlus size={14} /> Add</button>
           </div>
 
-          {resume.aboutInfo.map((item, i) => (
-            <div key={i} className="bg-[#1e1e26] rounded-xl p-4 border border-white/5 flex flex-col sm:flex-row items-center gap-3">
-              <input value={item.fieldName} onChange={(e) => updateAbout(i, "fieldName", e.target.value)} placeholder="Field name" className="w-full sm:w-[180px] bg-[#14141a] text-white px-3 py-2.5 rounded-lg font-mono text-sm border border-white/5 outline-none focus:ring-1 focus:ring-accent" />
-              <input value={item.fieldValue} onChange={(e) => updateAbout(i, "fieldValue", e.target.value)} placeholder="Field value" className="flex-1 w-full bg-[#14141a] text-white px-3 py-2.5 rounded-lg font-mono text-sm border border-white/5 outline-none focus:ring-1 focus:ring-accent" />
-              <button onClick={() => removeAbout(i)} className="text-red-400/60 hover:text-red-400 transition-colors p-1"><FiTrash2 size={14} /></button>
-            </div>
-          ))}
+          <Reorder.Group axis="y" values={resume.aboutInfo} onReorder={(newOrder) => setResume(p => ({ ...p, aboutInfo: newOrder }))} className="space-y-3">
+            {resume.aboutInfo.map((item, i) => (
+              <AboutItemCard key={item.fieldName + i} item={item} index={i} updateAbout={updateAbout} removeAbout={removeAbout} />
+            ))}
+          </Reorder.Group>
         </motion.div>
       )}
 

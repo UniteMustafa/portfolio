@@ -4,6 +4,8 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { FiStar } from "react-icons/fi";
 import { usePortfolio } from "@/data/portfolio-context";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 export default function Testimonials() {
   const { data } = usePortfolio();
@@ -65,12 +67,14 @@ export default function Testimonials() {
                 </div>
 
                 {/* Quote */}
-                <p
-                  className="font-mono text-sm leading-relaxed flex-1 mb-6"
-                  style={{ color: "var(--color-text-muted)" }}
+                <div
+                  className="font-mono text-sm leading-relaxed flex-1 mb-6 prose prose-invert prose-p:my-0 prose-a:text-accent hover:prose-a:text-accent-hover prose-strong:text-white prose-em:text-white/80"
+                  style={{ color: "var(--color-text-muted)", whiteSpace: "pre-line" }}
                 >
-                  &ldquo;{t.body}&rdquo;
-                </p>
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                    {`"${t.body}"`}
+                  </ReactMarkdown>
+                </div>
 
                 {/* Author */}
                 <div className="flex items-center gap-3 pt-4 border-t border-white/5">

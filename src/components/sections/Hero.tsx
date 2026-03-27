@@ -7,6 +7,8 @@ import { FiDownload } from "react-icons/fi";
 import { FaGithub } from "react-icons/fa";
 import { usePortfolio } from "@/data/portfolio-context";
 import { socialIconMap } from "@/lib/constants";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 export default function Hero() {
   const { data } = usePortfolio();
@@ -61,15 +63,17 @@ export default function Hero() {
           </motion.div>
 
           {/* Description */}
-          <motion.p
-            className="text-sm md:text-base leading-relaxed max-w-[500px]"
-            style={{ color: "var(--color-text-muted)", fontFamily: "JetBrains Mono, monospace" }}
+          <motion.div
+            className="text-sm md:text-base leading-relaxed max-w-[500px] prose prose-invert prose-p:my-0 prose-a:text-accent hover:prose-a:text-accent-hover prose-strong:text-white prose-em:text-white/80"
+            style={{ color: "var(--color-text-muted)", fontFamily: "JetBrains Mono, monospace", whiteSpace: "pre-line" }}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1.2, duration: 0.5 }}
           >
-            {description}
-          </motion.p>
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+              {description}
+            </ReactMarkdown>
+          </motion.div>
 
           {/* Buttons */}
           <motion.div

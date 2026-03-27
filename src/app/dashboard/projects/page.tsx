@@ -1,12 +1,156 @@
 "use client";
 
 import { useState, useCallback, useRef, useEffect } from "react";
-import { motion } from "framer-motion";
-import { FiSave, FiPlus, FiTrash2, FiX, FiCheck } from "react-icons/fi";
+import { motion, Reorder, useDragControls } from "framer-motion";
+import { FiSave, FiPlus, FiTrash2, FiX, FiCheck, FiMenu } from "react-icons/fi";
 import { usePortfolio } from "@/data/portfolio-context";
 import Toast from "@/components/dashboard/Toast";
 import ImageUploader from "@/components/dashboard/ImageUploader";
 import type { ProjectItem } from "@/data/portfolio-data";
+
+function ProjectItemCard({
+  project,
+  index,
+  updateItem,
+  removeProject,
+  addStackItem,
+  removeStackItem,
+  updateStack,
+}: {
+  project: ProjectItem;
+  index: number;
+  updateItem: (index: number, field: keyof ProjectItem, value: string) => void;
+  removeProject: (index: number) => void;
+  addStackItem: (index: number) => void;
+  removeStackItem: (projectIndex: number, stackIndex: number) => void;
+  updateStack: (projectIndex: number, stackIndex: number, value: string) => void;
+}) {
+  const controls = useDragControls();
+
+  return (
+    <Reorder.Item
+      value={project}
+      dragListener={false}
+      dragControls={controls}
+    >
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: index * 0.06 }}
+        className="bg-[#1e1e26] rounded-xl p-6 border border-white/5 space-y-5"
+      >
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div
+              onPointerDown={(e) => controls.start(e)}
+              className="cursor-grab active:cursor-grabbing p-2 -ml-2 rounded-md hover:bg-white/5 transition-colors"
+              title="Drag to reorder"
+            >
+              <FiMenu className="text-[#9a9aaa]/60" />
+            </div>
+            <span className="text-accent font-mono font-bold text-2xl">{project.num}</span>
+          </div>
+          <button
+            onClick={() => removeProject(index)}
+            className="text-red-400/60 hover:text-red-400 transition-colors p-2"
+          >
+            <FiTrash2 size={16} />
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-muted font-mono text-xs mb-2">Title</label>
+            <input
+              value={project.title}
+              onChange={(e) => updateItem(index, "title", e.target.value)}
+              className="w-full bg-[#14141a] text-white p-3 rounded-lg outline-none focus:ring-1 focus:ring-accent transition-all font-mono text-sm border border-white/5"
+            />
+          </div>
+          <div>
+            <label className="block text-muted font-mono text-xs mb-2">Category</label>
+            <input
+              value={project.category}
+              onChange={(e) => updateItem(index, "category", e.target.value)}
+              className="w-full bg-[#14141a] text-white p-3 rounded-lg outline-none focus:ring-1 focus:ring-accent transition-all font-mono text-sm border border-white/5"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-muted font-mono text-xs mb-2">Description</label>
+          <textarea
+            rows={2}
+            value={project.description}
+            onChange={(e) => updateItem(index, "description", e.target.value)}
+            className="w-full bg-[#14141a] text-white p-3 rounded-lg outline-none focus:ring-1 focus:ring-accent transition-all font-mono text-sm border border-white/5 resize-none"
+          />
+          <p className="text-[#9a9aaa]/50 text-[10px] font-mono mt-1">Format text: **bold**, *italic*, [link text](url), & \n for new line.</p>
+        </div>
+
+        <div>
+          <label className="block text-muted font-mono text-xs mb-2">Project Image</label>
+          <ImageUploader
+            value={project.image}
+            onChange={(url) => updateItem(index, "image", url)}
+          />
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-muted font-mono text-xs mb-2">Live URL</label>
+            <input
+              value={project.live}
+              onChange={(e) => updateItem(index, "live", e.target.value)}
+              className="w-full bg-[#14141a] text-white p-3 rounded-lg outline-none focus:ring-1 focus:ring-accent transition-all font-mono text-sm border border-white/5"
+            />
+          </div>
+          <div>
+            <label className="block text-muted font-mono text-xs mb-2">GitHub URL</label>
+            <input
+              value={project.github}
+              onChange={(e) => updateItem(index, "github", e.target.value)}
+              className="w-full bg-[#14141a] text-white p-3 rounded-lg outline-none focus:ring-1 focus:ring-accent transition-all font-mono text-sm border border-white/5"
+            />
+          </div>
+        </div>
+
+        <div>
+          <div className="flex items-center justify-between mb-2">
+            <label className="text-muted font-mono text-xs">Tech Stack</label>
+            <button
+              onClick={() => addStackItem(index)}
+              className="text-accent font-mono text-xs hover:underline"
+            >
+              + Add tech
+            </button>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {project.stack.map((tech, si) => (
+              <div
+                key={si}
+                className="flex items-center gap-1 bg-accent/10 border border-accent/20 rounded-lg pl-3 pr-1 py-1"
+              >
+                <input
+                  value={tech.name}
+                  onChange={(e) => updateStack(index, si, e.target.value)}
+                  className="bg-transparent text-accent font-mono text-sm outline-none w-24"
+                  placeholder="Tech name"
+                />
+                <button
+                  onClick={() => removeStackItem(index, si)}
+                  className="text-accent/40 hover:text-red-400 transition-colors p-1"
+                >
+                  <FiX size={12} />
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      </motion.div>
+    </Reorder.Item>
+  );
+}
 
 export default function ProjectsPage() {
   const { data, updateSection } = usePortfolio();
@@ -116,118 +260,20 @@ export default function ProjectsPage() {
         </button>
       </motion.div>
 
-      <div className="space-y-6">
+      <Reorder.Group axis="y" values={projects} onReorder={setProjects} className="space-y-6">
         {projects.map((project, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.06 }}
-            className="bg-[#1e1e26] rounded-xl p-6 border border-white/5 space-y-5"
-          >
-            <div className="flex items-center justify-between">
-              <span className="text-accent font-mono font-bold text-2xl">{project.num}</span>
-              <button
-                onClick={() => removeProject(i)}
-                className="text-red-400/60 hover:text-red-400 transition-colors p-2"
-              >
-                <FiTrash2 size={16} />
-              </button>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-muted font-mono text-xs mb-2">Title</label>
-                <input
-                  value={project.title}
-                  onChange={(e) => updateItem(i, "title", e.target.value)}
-                  className="w-full bg-[#14141a] text-white p-3 rounded-lg outline-none focus:ring-1 focus:ring-accent transition-all font-mono text-sm border border-white/5"
-                />
-              </div>
-              <div>
-                <label className="block text-muted font-mono text-xs mb-2">Category</label>
-                <input
-                  value={project.category}
-                  onChange={(e) => updateItem(i, "category", e.target.value)}
-                  className="w-full bg-[#14141a] text-white p-3 rounded-lg outline-none focus:ring-1 focus:ring-accent transition-all font-mono text-sm border border-white/5"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-muted font-mono text-xs mb-2">Description</label>
-              <textarea
-                rows={2}
-                value={project.description}
-                onChange={(e) => updateItem(i, "description", e.target.value)}
-                className="w-full bg-[#14141a] text-white p-3 rounded-lg outline-none focus:ring-1 focus:ring-accent transition-all font-mono text-sm border border-white/5 resize-none"
-              />
-            </div>
-
-            {/* Project Image — file upload */}
-            <div>
-              <label className="block text-muted font-mono text-xs mb-2">Project Image</label>
-              <ImageUploader
-                value={project.image}
-                onChange={(url) => updateItem(i, "image", url)}
-              />
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-muted font-mono text-xs mb-2">Live URL</label>
-                <input
-                  value={project.live}
-                  onChange={(e) => updateItem(i, "live", e.target.value)}
-                  className="w-full bg-[#14141a] text-white p-3 rounded-lg outline-none focus:ring-1 focus:ring-accent transition-all font-mono text-sm border border-white/5"
-                />
-              </div>
-              <div>
-                <label className="block text-muted font-mono text-xs mb-2">GitHub URL</label>
-                <input
-                  value={project.github}
-                  onChange={(e) => updateItem(i, "github", e.target.value)}
-                  className="w-full bg-[#14141a] text-white p-3 rounded-lg outline-none focus:ring-1 focus:ring-accent transition-all font-mono text-sm border border-white/5"
-                />
-              </div>
-            </div>
-
-            {/* Stack / Technologies */}
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <label className="text-muted font-mono text-xs">Tech Stack</label>
-                <button
-                  onClick={() => addStackItem(i)}
-                  className="text-accent font-mono text-xs hover:underline"
-                >
-                  + Add tech
-                </button>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {project.stack.map((tech, si) => (
-                  <div
-                    key={si}
-                    className="flex items-center gap-1 bg-accent/10 border border-accent/20 rounded-lg pl-3 pr-1 py-1"
-                  >
-                    <input
-                      value={tech.name}
-                      onChange={(e) => updateStack(i, si, e.target.value)}
-                      className="bg-transparent text-accent font-mono text-sm outline-none w-24"
-                      placeholder="Tech name"
-                    />
-                    <button
-                      onClick={() => removeStackItem(i, si)}
-                      className="text-accent/40 hover:text-red-400 transition-colors p-1"
-                    >
-                      <FiX size={12} />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </motion.div>
+          <ProjectItemCard
+            key={project.num + project.title}
+            project={project}
+            index={i}
+            updateItem={updateItem}
+            removeProject={removeProject}
+            addStackItem={addStackItem}
+            removeStackItem={removeStackItem}
+            updateStack={updateStack}
+          />
         ))}
-      </div>
+      </Reorder.Group>
 
       {/* Scroll anchor */}
       <div ref={bottomRef} />

@@ -1,11 +1,89 @@
 "use client";
 
 import { useState, useCallback, useRef, useEffect } from "react";
-import { motion, Reorder } from "framer-motion";
+import { motion, Reorder, useDragControls } from "framer-motion";
 import { FiSave, FiPlus, FiTrash2, FiMenu } from "react-icons/fi";
 import { usePortfolio } from "@/data/portfolio-context";
 import Toast from "@/components/dashboard/Toast";
 import type { ServiceItem } from "@/data/portfolio-data";
+
+function ServiceItemCard({
+  service,
+  index,
+  updateItem,
+  removeService
+}: {
+  service: ServiceItem;
+  index: number;
+  updateItem: (index: number, field: keyof ServiceItem, value: string) => void;
+  removeService: (index: number) => void;
+}) {
+  const controls = useDragControls();
+
+  return (
+    <Reorder.Item 
+      value={service} 
+      dragListener={false} 
+      dragControls={controls}
+    >
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: index * 0.06 }}
+        className="bg-[#1e1e26] rounded-xl p-5 border border-white/5 space-y-4"
+      >
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div
+              onPointerDown={(e) => controls.start(e)}
+              className="cursor-grab active:cursor-grabbing p-2 -ml-2 rounded-md hover:bg-white/5 transition-colors"
+              title="Drag to reorder"
+            >
+              <FiMenu className="text-[#9a9aaa]/60" />
+            </div>
+            <span className="text-accent font-mono font-bold text-lg">{service.num}</span>
+          </div>
+          <button
+            onClick={() => removeService(index)}
+            className="text-red-400/60 hover:text-red-400 transition-colors p-2"
+          >
+            <FiTrash2 size={16} />
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-[#9a9aaa] font-mono text-xs mb-2">Title</label>
+            <input
+              value={service.title}
+              onChange={(e) => updateItem(index, "title", e.target.value)}
+              className="w-full bg-[#14141a] text-white p-3 rounded-lg outline-none focus:ring-1 focus:ring-accent transition-all font-mono text-sm border border-white/5"
+            />
+          </div>
+          <div>
+            <label className="block text-[#9a9aaa] font-mono text-xs mb-2">Link</label>
+            <input
+              value={service.href}
+              onChange={(e) => updateItem(index, "href", e.target.value)}
+              className="w-full bg-[#14141a] text-white p-3 rounded-lg outline-none focus:ring-1 focus:ring-accent transition-all font-mono text-sm border border-white/5"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-[#9a9aaa] font-mono text-xs mb-2">Description</label>
+          <textarea
+            rows={2}
+            value={service.description}
+            onChange={(e) => updateItem(index, "description", e.target.value)}
+            className="w-full bg-[#14141a] text-white p-3 rounded-lg outline-none focus:ring-1 focus:ring-accent transition-all font-mono text-sm border border-white/5 resize-none"
+          />
+          <p className="text-[#9a9aaa]/50 text-[10px] font-mono mt-1">Format text: **bold**, *italic*, [link text](url), & \n for new line.</p>
+        </div>
+      </motion.div>
+    </Reorder.Item>
+  );
+}
 
 export default function ServicesPage() {
   const { data, updateSection } = usePortfolio();
@@ -80,56 +158,13 @@ export default function ServicesPage() {
 
       <Reorder.Group axis="y" values={services} onReorder={setServices} className="space-y-4">
         {services.map((service, i) => (
-          <Reorder.Item key={service.num + service.title} value={service}>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.06 }}
-              className="bg-[#1e1e26] rounded-xl p-5 border border-white/5 space-y-4 cursor-grab active:cursor-grabbing"
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <FiMenu className="text-[#9a9aaa]/40" />
-                  <span className="text-accent font-mono font-bold text-lg">{service.num}</span>
-                </div>
-                <button
-                  onClick={() => removeService(i)}
-                  className="text-red-400/60 hover:text-red-400 transition-colors p-2"
-                >
-                  <FiTrash2 size={16} />
-                </button>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-[#9a9aaa] font-mono text-xs mb-2">Title</label>
-                  <input
-                    value={service.title}
-                    onChange={(e) => updateItem(i, "title", e.target.value)}
-                    className="w-full bg-[#14141a] text-white p-3 rounded-lg outline-none focus:ring-1 focus:ring-accent transition-all font-mono text-sm border border-white/5"
-                  />
-                </div>
-                <div>
-                  <label className="block text-[#9a9aaa] font-mono text-xs mb-2">Link</label>
-                  <input
-                    value={service.href}
-                    onChange={(e) => updateItem(i, "href", e.target.value)}
-                    className="w-full bg-[#14141a] text-white p-3 rounded-lg outline-none focus:ring-1 focus:ring-accent transition-all font-mono text-sm border border-white/5"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-[#9a9aaa] font-mono text-xs mb-2">Description</label>
-                <textarea
-                  rows={2}
-                  value={service.description}
-                  onChange={(e) => updateItem(i, "description", e.target.value)}
-                  className="w-full bg-[#14141a] text-white p-3 rounded-lg outline-none focus:ring-1 focus:ring-accent transition-all font-mono text-sm border border-white/5 resize-none"
-                />
-              </div>
-            </motion.div>
-          </Reorder.Item>
+          <ServiceItemCard
+            key={service.num + service.title}
+            service={service}
+            index={i}
+            updateItem={updateItem}
+            removeService={removeService}
+          />
         ))}
       </Reorder.Group>
 

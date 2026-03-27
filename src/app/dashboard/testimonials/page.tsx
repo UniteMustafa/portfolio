@@ -1,11 +1,112 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { motion } from "framer-motion";
-import { FiPlus, FiTrash2, FiSave, FiStar } from "react-icons/fi";
+import { motion, Reorder, useDragControls } from "framer-motion";
+import { FiPlus, FiTrash2, FiSave, FiStar, FiMenu } from "react-icons/fi";
 import { usePortfolio } from "@/data/portfolio-context";
 import Toast from "@/components/dashboard/Toast";
 import type { TestimonialItem } from "@/data/portfolio-data";
+
+function TestimonialItemCard({
+  item,
+  index,
+  updateItem,
+  removeItem,
+}: {
+  item: TestimonialItem;
+  index: number;
+  updateItem: (i: number, f: keyof TestimonialItem, v: string | number) => void;
+  removeItem: (i: number) => void;
+}) {
+  const controls = useDragControls();
+
+  return (
+    <Reorder.Item value={item} dragListener={false} dragControls={controls}>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: index * 0.05 }}
+        className="bg-[#1e1e26] rounded-xl p-6 border border-white/5 space-y-4"
+      >
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div
+              onPointerDown={(e) => controls.start(e)}
+              className="cursor-grab active:cursor-grabbing p-2 -ml-2 rounded-md hover:bg-white/5 transition-colors"
+              title="Drag to reorder"
+            >
+              <FiMenu className="text-[#9a9aaa]/60" />
+            </div>
+            <span className="text-accent font-mono text-xs font-bold">
+              Testimonial
+            </span>
+          </div>
+          <button
+            onClick={() => removeItem(index)}
+            className="text-red-400/40 hover:text-red-400 transition-colors p-2 -mr-2"
+          >
+            <FiTrash2 size={16} />
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-[#9a9aaa] font-mono text-xs mb-1">Name</label>
+            <input
+              value={item.name}
+              onChange={(e) => updateItem(index, "name", e.target.value)}
+              className="w-full bg-[#14141a] text-white p-3 rounded-lg outline-none focus:ring-1 focus:ring-accent font-mono text-sm border border-white/5"
+            />
+          </div>
+          <div>
+            <label className="block text-[#9a9aaa] font-mono text-xs mb-1">Role</label>
+            <input
+              value={item.role}
+              onChange={(e) => updateItem(index, "role", e.target.value)}
+              className="w-full bg-[#14141a] text-white p-3 rounded-lg outline-none focus:ring-1 focus:ring-accent font-mono text-sm border border-white/5"
+            />
+          </div>
+          <div>
+            <label className="block text-[#9a9aaa] font-mono text-xs mb-1">Company</label>
+            <input
+              value={item.company}
+              onChange={(e) => updateItem(index, "company", e.target.value)}
+              className="w-full bg-[#14141a] text-white p-3 rounded-lg outline-none focus:ring-1 focus:ring-accent font-mono text-sm border border-white/5"
+            />
+          </div>
+          <div>
+            <label className="block text-[#9a9aaa] font-mono text-xs mb-1">Rating</label>
+            <div className="flex items-center gap-1 pt-2">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <button
+                  key={star}
+                  onClick={() => updateItem(index, "rating", star)}
+                  className="transition-colors"
+                >
+                  <FiStar
+                    size={20}
+                    className={star <= item.rating ? "text-accent fill-accent" : "text-white/20"}
+                  />
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-[#9a9aaa] font-mono text-xs mb-1">Testimonial</label>
+          <textarea
+            rows={3}
+            value={item.body}
+            onChange={(e) => updateItem(index, "body", e.target.value)}
+            className="w-full bg-[#14141a] text-white p-3 rounded-lg outline-none focus:ring-1 focus:ring-accent font-mono text-sm border border-white/5 resize-none"
+          />
+          <p className="text-[#9a9aaa]/50 text-[10px] font-mono mt-1">Format text: **bold**, *italic*, [link text](url), & \n for new line.</p>
+        </div>
+      </motion.div>
+    </Reorder.Item>
+  );
+}
 
 export default function TestimonialsDashboardPage() {
   const { data, updateSection } = usePortfolio();
@@ -53,81 +154,17 @@ export default function TestimonialsDashboardPage() {
         </p>
       </motion.div>
 
-      {items.map((item, i) => (
-        <motion.div
-          key={item.id}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: i * 0.05 }}
-          className="bg-[#1e1e26] rounded-xl p-6 border border-white/5 space-y-4"
-        >
-          <div className="flex items-center justify-between">
-            <span className="text-accent font-mono text-xs font-bold">
-              Testimonial #{i + 1}
-            </span>
-            <button
-              onClick={() => removeItem(i)}
-              className="text-red-400/40 hover:text-red-400 transition-colors"
-            >
-              <FiTrash2 size={16} />
-            </button>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-[#9a9aaa] font-mono text-xs mb-1">Name</label>
-              <input
-                value={item.name}
-                onChange={(e) => updateItem(i, "name", e.target.value)}
-                className="w-full bg-[#14141a] text-white p-3 rounded-lg outline-none focus:ring-1 focus:ring-accent font-mono text-sm border border-white/5"
-              />
-            </div>
-            <div>
-              <label className="block text-[#9a9aaa] font-mono text-xs mb-1">Role</label>
-              <input
-                value={item.role}
-                onChange={(e) => updateItem(i, "role", e.target.value)}
-                className="w-full bg-[#14141a] text-white p-3 rounded-lg outline-none focus:ring-1 focus:ring-accent font-mono text-sm border border-white/5"
-              />
-            </div>
-            <div>
-              <label className="block text-[#9a9aaa] font-mono text-xs mb-1">Company</label>
-              <input
-                value={item.company}
-                onChange={(e) => updateItem(i, "company", e.target.value)}
-                className="w-full bg-[#14141a] text-white p-3 rounded-lg outline-none focus:ring-1 focus:ring-accent font-mono text-sm border border-white/5"
-              />
-            </div>
-            <div>
-              <label className="block text-[#9a9aaa] font-mono text-xs mb-1">Rating</label>
-              <div className="flex items-center gap-1 pt-2">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <button
-                    key={star}
-                    onClick={() => updateItem(i, "rating", star)}
-                    className="transition-colors"
-                  >
-                    <FiStar
-                      size={20}
-                      className={star <= item.rating ? "text-accent fill-accent" : "text-white/20"}
-                    />
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-[#9a9aaa] font-mono text-xs mb-1">Testimonial</label>
-            <textarea
-              rows={3}
-              value={item.body}
-              onChange={(e) => updateItem(i, "body", e.target.value)}
-              className="w-full bg-[#14141a] text-white p-3 rounded-lg outline-none focus:ring-1 focus:ring-accent font-mono text-sm border border-white/5 resize-none"
-            />
-          </div>
-        </motion.div>
-      ))}
+      <Reorder.Group axis="y" values={items} onReorder={setItems} className="space-y-6">
+        {items.map((item, i) => (
+          <TestimonialItemCard
+            key={item.id}
+            item={item}
+            index={i}
+            updateItem={updateItem}
+            removeItem={removeItem}
+          />
+        ))}
+      </Reorder.Group>
 
       <div className="flex items-center gap-3">
         <button

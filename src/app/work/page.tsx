@@ -7,6 +7,8 @@ import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import Link from "next/link";
 import Image from "next/image";
 import { usePortfolio } from "@/data/portfolio-context";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 export default function WorkPage() {
   const { data } = usePortfolio();
@@ -58,9 +60,11 @@ export default function WorkPage() {
                 {activeProject.title}
               </h2>
 
-              <p className="text-muted text-sm md:text-base leading-relaxed font-mono">
-                {activeProject.description}
-              </p>
+              <div className="text-muted text-sm md:text-base leading-relaxed font-mono prose prose-invert prose-p:my-0 prose-a:text-accent hover:prose-a:text-accent-hover prose-strong:text-white prose-em:text-white/80" style={{ whiteSpace: "pre-line" }}>
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                  {activeProject.description}
+                </ReactMarkdown>
+              </div>
 
               <ul className="flex flex-wrap gap-3">
                 {activeProject.stack.map((item, index) => {

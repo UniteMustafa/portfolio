@@ -13,6 +13,8 @@ import {
 import { SiTailwindcss, SiNextdotjs } from "react-icons/si";
 import { usePortfolio } from "@/data/portfolio-context";
 import type { IconType } from "react-icons";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 const skillIconMap: Record<string, IconType> = {
   html: FaHtml5,
@@ -60,10 +62,11 @@ export default function ResumePage() {
           {/* Left Column (Navigation) */}
           <div className="w-full xl:w-[400px] flex flex-col gap-8 border-b xl:border-b-0 xl:border-r border-white/10 pb-10 xl:pb-0 pr-0 xl:pr-[60px]">
             <h2 className="text-4xl md:text-[42px] font-bold font-mono border-b-2 border-accent pb-3 w-fit mx-auto xl:mx-0 mb-2">Why hire me?</h2>
-            <p className="text-[#9a9aaa] leading-relaxed max-w-[380px] font-mono text-sm md:text-base">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-              Scelerisque consequat, faucibus et, et.
-            </p>
+            <div className="text-[#9a9aaa] leading-relaxed max-w-[380px] font-mono text-sm md:text-base prose prose-invert prose-p:my-0 prose-a:text-accent hover:prose-a:text-accent-hover prose-strong:text-white prose-em:text-white/80" style={{ whiteSpace: "pre-line" }}>
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                {`Lorem ipsum dolor sit amet, consectetur adipiscing elit.\nScelerisque consequat, faucibus et, et.`}
+              </ReactMarkdown>
+            </div>
 
             <div className="flex flex-col gap-4">
               {[
@@ -104,9 +107,11 @@ export default function ResumePage() {
                       {resume.experienceTitle}
                     </h3>
                   </AnimatedTitleBox>
-                  <p className="text-[#9a9aaa] font-mono text-sm leading-relaxed mx-auto xl:mx-0 max-w-[600px] text-center xl:text-left">
-                    {resume.experienceDescription}
-                  </p>
+                  <div className="text-[#9a9aaa] font-mono text-sm leading-relaxed mx-auto xl:mx-0 max-w-[600px] text-center xl:text-left prose prose-invert prose-p:my-0 prose-a:text-accent hover:prose-a:text-accent-hover prose-strong:text-white prose-em:text-white/80" style={{ whiteSpace: "pre-line" }}>
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                      {resume.experienceDescription}
+                    </ReactMarkdown>
+                  </div>
 
                   <div className="h-[400px] overflow-y-scroll resume-scroll pr-4 md:pr-6 mt-4">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-[30px]">
@@ -145,9 +150,11 @@ export default function ResumePage() {
                       {resume.educationTitle}
                     </h3>
                   </AnimatedTitleBox>
-                  <p className="text-[#9a9aaa] font-mono text-sm leading-relaxed mx-auto xl:mx-0 max-w-[600px] text-center xl:text-left">
-                    {resume.educationDescription}
-                  </p>
+                  <div className="text-[#9a9aaa] font-mono text-sm leading-relaxed mx-auto xl:mx-0 max-w-[600px] text-center xl:text-left prose prose-invert prose-p:my-0 prose-a:text-accent hover:prose-a:text-accent-hover prose-strong:text-white prose-em:text-white/80" style={{ whiteSpace: "pre-line" }}>
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                      {resume.educationDescription}
+                    </ReactMarkdown>
+                  </div>
 
                   <div className="h-[400px] overflow-y-scroll resume-scroll pr-4 md:pr-6 mt-4">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-[30px]">
@@ -186,9 +193,11 @@ export default function ResumePage() {
                       {resume.skillsTitle}
                     </h3>
                   </AnimatedTitleBox>
-                  <p className="text-[#9a9aaa] font-mono text-sm leading-relaxed mx-auto xl:mx-0 max-w-[600px] text-center xl:text-left">
-                    {resume.skillsDescription}
-                  </p>
+                  <div className="text-[#9a9aaa] font-mono text-sm leading-relaxed mx-auto xl:mx-0 max-w-[600px] text-center xl:text-left prose prose-invert prose-p:my-0 prose-a:text-accent hover:prose-a:text-accent-hover prose-strong:text-white prose-em:text-white/80" style={{ whiteSpace: "pre-line" }}>
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                      {resume.skillsDescription}
+                    </ReactMarkdown>
+                  </div>
 
                   <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 xl:gap-[30px] w-full mt-4">
                     {resume.skillsList.map((skill, index) => {
@@ -229,9 +238,11 @@ export default function ResumePage() {
                       {resume.aboutTitle}
                     </h3>
                   </AnimatedTitleBox>
-                  <p className="text-[#9a9aaa] font-mono text-sm leading-relaxed mx-auto xl:mx-0 max-w-[600px] text-center xl:text-left">
-                    {resume.aboutDescription}
-                  </p>
+                  <div className="text-[#9a9aaa] font-mono text-sm leading-relaxed mx-auto xl:mx-0 max-w-[600px] text-center xl:text-left prose prose-invert prose-p:my-0 prose-a:text-accent hover:prose-a:text-accent-hover prose-strong:text-white prose-em:text-white/80" style={{ whiteSpace: "pre-line" }}>
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                      {resume.aboutDescription}
+                    </ReactMarkdown>
+                  </div>
 
                   <ul className="grid grid-cols-1 md:grid-cols-2 gap-4 xl:gap-[30px] max-w-[740px] mx-auto xl:mx-0 mt-8">
                     {resume.aboutInfo.map((item, index) => (

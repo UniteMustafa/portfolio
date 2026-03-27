@@ -103,7 +103,7 @@ function DashboardContent({
   }
 
   return (
-    <div className="flex h-[100dvh] overflow-hidden bg-bg">
+    <div className="fixed inset-0 flex overflow-hidden bg-bg">
       {/* Sidebar — Desktop */}
       <aside className="hidden lg:flex flex-col w-[260px] border-r border-white/5 bg-[#16161c] shrink-0">
         <div className="flex items-center gap-3 px-6 h-16 border-b border-white/5">
